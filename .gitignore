@@ -4,3 +4,5 @@ jobdata/*
 sessions.db
 server/projects.json
 config/regions/*.conf
+db
+db/*
