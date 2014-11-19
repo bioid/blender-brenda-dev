@@ -13,6 +13,43 @@ Processes.prototype.setDatabase = function(db) {
   this.db = db;
 };
 
+Processes.prototype.checkStatus = function(job, key, callback) {
+  var path = job.dir + '/scratch/DONE';
+  fs.exists(path, function(exists) {
+    if (exists) { var done = true }
+    else { var done = false }
+    callback(key, done);
+    });
+  };
+
+Processes.prototype.getJobStatus = function(jobs, callback) {
+  for (var key in jobs) {
+    if (jobs.hasOwnProperty(key)) {
+      // check if the job is done
+      this.checkStatus(jobs[key], key, function(jobkey, is_done) {
+        jobs[jobkey].done = is_done;
+      });
+      }
+  }
+  callback(jobs);
+};
+
+Processes.prototype.getJobs = function(project, callback) {
+  var path = global.config.projects_dir + '/' + project.dir + '/jobs/*';
+  glob(path, function(err, files) {
+    if (err) { console.log(err) }
+    var jobs = {};
+    for (var i = 0; i < files.length; i++) {
+      var parts = files[i].split('/');
+      jobs[parts[parts.length - 1]] = {
+        'dir': files[i],
+        'done': false
+      };
+    }
+    callback(jobs);
+  });
+};
+
 Processes.prototype.getBlenderFiles = function(project, callback) {
   var path = global.config.projects_dir + '/' + project.dir + '/data/**/*.blend';
   glob(path, function(err, files) {
@@ -49,7 +86,7 @@ Processes.prototype.buildConfig = function(opts, callback) {
     configLines.push('BLENDER_BAKE_MARGIN=' + bakemargin);
     configLines.push('BLENDER_BAKE_UVLAYER=' + bakeuvlayer);
   }
-console.log('do it!', opts, configLines);
+// console.log('do it!', opts, configLines);
 
   var configText = configLines.join('\n') + '\n';
   var path = global.config.projects_dir + '/' + opts.project.dir + '/jobs/' + opts.jobname + '/scratch/brenda-job.conf';
