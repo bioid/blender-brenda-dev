@@ -19,8 +19,8 @@ var express         = require('express'),
     procs           = require('./server/processes')(spawn, io),
     serveIndex      = require('serve-index'),
     serveStatic     = require('serve-static'),
+    anyDB           = require('any-db'),
     influx          = require('influx');
-
 
 // file handler
 app.use(busboy());
@@ -58,6 +58,9 @@ if (global.config.influxdb && !global.config.influxdb.readonly) {
     if (dbnames.indexOf(dbname) == -1) influxclient.createDatabase(dbname);
   });
 }
+
+
+anyDB.createConnection('sqlite3://db/projects.db');
 
 // make sure children die
 process.on('exit', function() {
