@@ -9,6 +9,10 @@ var Processes = function() {
   this.db = false;
 };
 
+Processes.prototype.removeChild = function(child) {
+  this.children.splice(this.children.indexOf(child), 1);
+};
+
 Processes.prototype.setDatabase = function(db) {
   this.db = db;
 };
@@ -110,6 +114,9 @@ Processes.prototype.spawnInstance = function(client, instargs) {
     console.log('stderr: ' + data);
     client.emit('stdout', data.toString());
   });
+  child.on('exit', function(code) {
+    this.removeChild(child);
+  }.bind(this));
 };
 
 Processes.prototype.buildJobFile = function(client, jobname) {
@@ -121,6 +128,9 @@ Processes.prototype.buildJobFile = function(client, jobname) {
     console.log('stdout: ' + data);
     io.sockets.connected[client].emit('stdout', data.toString());
   });
+  child.on('exit', function(code) {
+    this.removeChild(child);
+  }.bind(this));
 };
 
 Processes.prototype.checkInstancePrice = function(client, instargs) {
@@ -150,6 +160,9 @@ Processes.prototype.checkInstancePrice = function(client, instargs) {
       client.emit('priceupdate', 'No price info');
     }
   });
+  child.on('exit', function(code) {
+    this.removeChild(child);
+  }.bind(this));
 };
 Processes.prototype.checkInstanceCounts = function() {
   if (!this.db) return;
@@ -188,6 +201,7 @@ Processes.prototype.checkInstanceCountForRegion = function(region) {
     var influxcfg = global.config.influxdb;
     var refreshtime = (influxcfg && influxcfg.refresh && influxcfg.refresh.instances ? influxcfg.refresh.instances : 30000);
     setTimeout(this.checkInstanceCountForRegion.bind(this, region), refreshtime);
+    this.removeChild(child);
   }.bind(this));
 };
 Processes.prototype.checkJobCount = function() {
@@ -208,6 +222,7 @@ Processes.prototype.checkJobCount = function() {
     var influxcfg = global.config.influxdb;
     var refreshtime = (influxcfg && influxcfg.refresh && influxcfg.refresh.jobs ? influxcfg.refresh.jobs : 30000);
     setTimeout(this.checkJobCount.bind(this), refreshtime);
+    this.removeChild(child);
   }.bind(this));
 };
 
