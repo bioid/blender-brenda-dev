@@ -237,7 +237,8 @@ Processes.prototype.killAll = function() {
   console.log('killing', this.children.length, 'child processes');
   this.children.forEach(function(child) {
     child.kill();
-  });
+    this.removeChild(child);
+  }.bind(this));
 };
 
 return new Processes();
