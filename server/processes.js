@@ -53,7 +53,6 @@ Processes.prototype.buildConfig = function(opts, callback) {
     configLines.push('BLENDER_BAKE_MARGIN=' + bakemargin);
     configLines.push('BLENDER_BAKE_UVLAYER=' + bakeuvlayer);
   }
-// console.log('do it!', opts, configLines);
 
   var configText = configLines.join('\n') + '\n';
   var path = global.config.projects_dir + '/' + opts.project.name + '/jobs/' + opts.jobname + '/scratch/brenda-job.conf';
