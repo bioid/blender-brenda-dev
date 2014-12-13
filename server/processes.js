@@ -18,7 +18,7 @@ Processes.prototype.setDatabase = function(db) {
 };
 
 Processes.prototype.getBlenderFiles = function(project, callback) {
-  var path = global.config.projects_dir + '/' + project.dir + '/data/**/*.blend';
+  var path = global.config.projects_dir + '/' + project.name + '/data/**/*.blend';
   glob(path, function(err, files) {
     if (err) { console.log(err) }
     callback(files);
@@ -36,8 +36,8 @@ Processes.prototype.getRegionConfigs = function(callback) {
 Processes.prototype.buildConfig = function(opts, callback) {
   var configLines = [
     'WORK_QUEUE=sqs://elation-render-output',
-    'BLENDER_PROJECT=s3://elation-render-data/'+ opts.project.dir + '.tar.gz',
-    'RENDER_OUTPUT=s3://elation-render-output/'+ opts.project.dir + '/' + opts.jobname + '/',
+    'BLENDER_PROJECT=s3://elation-render-data/'+ opts.project.name + '.tar.gz',
+    'RENDER_OUTPUT=s3://elation-render-output/'+ opts.project.name + '/' + opts.jobname + '/',
     'BLENDER_FILE=' + opts.renderOpts.blenderFile,
     'BLENDER_RENDER_RESOLUTION_X=' + opts.renderOpts.renderResolutionX,
     'BLENDER_RENDER_RESOLUTION_Y=' + opts.renderOpts.renderResolutionY,
@@ -56,7 +56,7 @@ Processes.prototype.buildConfig = function(opts, callback) {
 // console.log('do it!', opts, configLines);
 
   var configText = configLines.join('\n') + '\n';
-  var path = global.config.projects_dir + '/' + opts.project.dir + '/jobs/' + opts.jobname + '/scratch/brenda-job.conf';
+  var path = global.config.projects_dir + '/' + opts.project.name + '/jobs/' + opts.jobname + '/scratch/brenda-job.conf';
   fs.writeFile(path, configText, function(err) {
     if (err) { console.log(err) } 
     callback();
@@ -65,16 +65,16 @@ Processes.prototype.buildConfig = function(opts, callback) {
 
 Processes.prototype.submitJob = function(client, jobargs) {
   var args = [];
-  this.makeJobDir(jobargs.project.dir, jobargs.jobname, function() {
+  this.makeJobDir(jobargs.project.name, jobargs.jobname, function() {
     this.buildConfig(jobargs, function() {
       if (jobargs.jobtype == 'animation') {
         if (jobargs.subframe) {
-          args = [jobargs.project.dir, jobargs.jobname, 'subframe', '-s', jobargs.start, '-e', jobargs.end, '-X', jobargs.tilesX, '-Y', jobargs.tilesY];
+          args = [jobargs.project.name, jobargs.jobname, 'subframe', '-s', jobargs.start, '-e', jobargs.end, '-X', jobargs.tilesX, '-Y', jobargs.tilesY];
         } else {
-          args = [jobargs.project.dir, jobargs.jobname, 'animation', '-s', jobargs.start, '-e', jobargs.end];
+          args = [jobargs.project.name, jobargs.jobname, 'animation', '-s', jobargs.start, '-e', jobargs.end];
         }
       } else if (jobargs.jobtype == 'bake') {
-        args = [jobargs.project.dir, jobargs.jobname, 'bake', '-e', jobargs.numobjects];
+        args = [jobargs.project.name, jobargs.jobname, 'bake', '-e', jobargs.numobjects];
       }
       var child = spawn(global.config.spawn_jobs, args); // change to brenda-work
       this.children.push(child);
@@ -142,7 +142,6 @@ Processes.prototype.checkInstancePrice = function(client, instargs) {
   args.push('price');
   var child = spawn('brenda-run', args);
   this.children.push(child);
-  
   child.stdout.on('data', function(data) {
     console.log(data.toString());
     var lines = data.toString().split('\n');

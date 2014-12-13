@@ -12,7 +12,7 @@ var express         = require('express'),
     express_session = require('express-session'),
     SQLiteStore     = require('connect-sqlite3')(express_session),
     cookieParser    = require('cookie-parser'),
-    BrendaProjects  = require('./server/brenda-projects')(fs),
+    BrendaProjects  = require('./server/brenda-projects')(),
     app             = express(),                       
     server          = app.listen(global.config.port),
     io              = require('socket.io').listen(server),
@@ -117,7 +117,7 @@ io.on('connection', function(client) {
   client.on('addProject', function(data) {
     console.log('adding new project: ', data);
     BrendaProjects.addProject(data, function(name) {
-      console.log('added project:', name);
+      console.log('added project:', name.name);
       client.emit('projectadded', name);
       client.emit('projectupdate', BrendaProjects.projects);
     });
