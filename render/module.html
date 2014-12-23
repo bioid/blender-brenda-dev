@@ -50,6 +50,7 @@
         <!--<div class="cb" ng-click="tab = 'jobfile'">Jobfile</div>-->
         <div class="btn" ng-click="tab = 'jobqueue'" ng-class="{'btn-primary': tab == 'jobqueue'}">Jobs</div>
         <div class="btn" ng-click="tab = 'instances'; getInstancePrice(instanceArgs.instancetype)" ng-class="{'btn-primary': tab == 'instances'}">Instances</div>
+        <div class="btn" ng-click="tab = 'joblist'" ng-class="{'btn-primary': tab == 'joblist'}">Jobs</div>
     </div>
     <!-- Upload Form -->
     <div id="uploadform" ng-show="tab == 'jobfile'">
@@ -163,8 +164,14 @@
             </form>
         </div>
     </div>
-
-    <div id="debug">
+    <div id="joblist" class="job_list" ng-show="tab == 'joblist'">
+        <li ng-repeat="(project_id, name) in projects">
+            {{ project_id }}: <ul ng-repeat="job in name.jobs">
+                {{ job }}
+            </ul> 
+        </li>
+    </div>
+    <div id="debug" ng-hide="tab == 'joblist'">
         <h3>Console</h3>
         <ul id="stdout">
             <li ng-repeat="line in stdout track by $index">{{ line }}</li>
