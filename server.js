@@ -23,7 +23,8 @@ var express         = require('express'),
     influx          = require('influx');
 
 // file handler
-app.use(busboy());
+// app.use(busboy());
+
 // set up authentication and then static files
 
 var sessionStore = new SQLiteStore({'dir': __dirname + '/server'});
@@ -131,19 +132,19 @@ io.on('connection', function(client) {
 
 // api routes
 
-app.post('/api/upload:client_id', function(req, res) {
-  var client_id = req.params.client_id;
-  req.pipe(req.busboy);
-  req.busboy.on('file', function(fieldname, file, filename) {
-    console.log(global.config.jobdata_dir + filename);
-    var fstream = fs.createWriteStream(global.config.jobdata_dir + filename); 
-    file.pipe(fstream);
-    fstream.on('close', function () {
-        // file upload completed (hopefully)
-        procs.buildJobFile(client_id, filename);
-        res.redirect('back');
-    });
-  });
-});
+// app.post('/api/upload:client_id', function(req, res) {
+//   var client_id = req.params.client_id;
+//   req.pipe(req.busboy);
+//   req.busboy.on('file', function(fieldname, file, filename) {
+//     console.log(global.config.jobdata_dir + filename);
+//     var fstream = fs.createWriteStream(global.config.jobdata_dir + filename); 
+//     file.pipe(fstream);
+//     fstream.on('close', function () {
+//         // file upload completed (hopefully)
+//         procs.buildJobFile(client_id, filename);
+//         res.redirect('back');
+//     });
+//   });
+// });
 
 console.log("server listening on", global.config.port);
