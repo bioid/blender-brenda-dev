@@ -10,7 +10,6 @@ module.exports = function() {
     var sql = 'INSERT INTO projects(name) VALUES(?);';
     this.projects_db.query(sql, [name], function(err, res) {
       if (err) { console.log(err) }
-      console.log('sql response', res);
       callback(res);
     });
   };

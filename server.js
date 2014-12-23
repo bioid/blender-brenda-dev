@@ -108,9 +108,6 @@ io.on('connection', function(client) {
     BrendaProjects.addJob(data.jobname, data.project, function() {
       procs.submitJob(client, data, function() {
         client.emit('projectupdate', BrendaProjects.projects);
-        setTimeout(function(){
-          console.log('projects object:', BrendaProjects.projects);
-        }, 1000);
       });
     });
   });

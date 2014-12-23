@@ -11,7 +11,6 @@ module.exports = function() {
     global.dbHandler.getAllProjects(function(res) {
       for (var i = 0; i < res.rows.length; i++) {
         if (!this.projects.hasOwnProperty(res.rows[i].name)) {
-          console.log(res.rows[i])
           this.projects[res.rows[i].name] = res.rows[i];
         }
       }
