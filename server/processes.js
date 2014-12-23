@@ -84,6 +84,7 @@ Processes.prototype.submitJob = function(client, jobargs) {
       });
       child.on('exit', function(code) {
         this.checkJobCount();
+        this.removeChild(child);
       }.bind(this));
     }.bind(this));
   }.bind(this));
