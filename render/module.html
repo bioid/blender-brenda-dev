@@ -174,7 +174,7 @@
     <div id="debug" ng-hide="tab == 'joblist'">
         <h3>Console</h3>
         <ul id="stdout">
-            <li ng-repeat="line in stdout track by $index">{{ line }}</li>
+            <li ng-repeat="line in stdout track by $index" class="blink">{{ line }}</li>
         </ul>
     </div>
 </div>
