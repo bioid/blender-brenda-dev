@@ -60,8 +60,6 @@ if (global.config.influxdb && !global.config.influxdb.readonly) {
 }
 
 
-anyDB.createConnection('sqlite3://db/projects.db');
-
 // make sure children die
 process.on('exit', function() {
   procs.killAll();
