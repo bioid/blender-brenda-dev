@@ -62,7 +62,7 @@ Processes.prototype.buildConfig = function(opts, callback) {
   });
 };
 
-Processes.prototype.submitJob = function(client, jobargs) {
+Processes.prototype.submitJob = function(client, jobargs, callback) {
   var args = [];
   this.makeJobDir(jobargs.project.name, jobargs.jobname, function() {
     this.buildConfig(jobargs, function() {
@@ -85,6 +85,7 @@ Processes.prototype.submitJob = function(client, jobargs) {
       child.on('exit', function(code) {
         this.checkJobCount();
         this.removeChild(child);
+      callback();
       }.bind(this));
     }.bind(this));
   }.bind(this));

@@ -2,6 +2,8 @@
 // config
 global.dirname = __dirname;
 global.config = require('./config/serverconfig');
+global.dbHandler = require('./server/database')();
+
 // requires
 var express         = require('express'),
     passport        = require('passport'),
@@ -103,7 +105,14 @@ io.on('connection', function(client) {
   });
   client.on('submitjob', function(data) {
     console.log('job submit, data: ', data);
-    procs.submitJob(client, data);
+    BrendaProjects.addJob(data.jobname, data.project, function() {
+      procs.submitJob(client, data, function() {
+        client.emit('projectupdate', BrendaProjects.projects);
+        setTimeout(function(){
+          console.log('projects object:', BrendaProjects.projects);
+        }, 1000);
+      });
+    });
   });
   client.on('spawninstance', function(data) {
     console.log('instance submit, data: ', data);
@@ -116,7 +125,7 @@ io.on('connection', function(client) {
   client.on('addProject', function(data) {
     console.log('adding new project: ', data);
     BrendaProjects.addProject(data, function(name) {
-      console.log('added project:', name.name);
+      console.log('added project:', name);
       client.emit('projectadded', name);
       client.emit('projectupdate', BrendaProjects.projects);
     });

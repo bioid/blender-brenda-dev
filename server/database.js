@@ -7,10 +7,11 @@ module.exports = function() {
   };
   
   dbHandler.prototype.addProject = function(name, callback) {
-    var sql = 'INSERT INTO projects(name) VALUES(?)';
+    var sql = 'INSERT INTO projects(name) VALUES(?);';
     this.projects_db.query(sql, [name], function(err, res) {
       if (err) { console.log(err) }
-      callback(res.rows[0]);
+      console.log('sql response', res);
+      callback(res);
     });
   };
   
@@ -22,9 +23,21 @@ module.exports = function() {
     });
   };
   
-  // dbHandler.prototype.addJob = function(jobName, project) {
-  // TODO
-  // };
+  dbHandler.prototype.addJob = function(jobName, project, callback) {
+    var sql = 'INSERT INTO jobs(job_name, project_id) VALUES(?, ?);';
+    this.projects_db.query(sql, [jobName, project.project_id], function(err, res) {
+      if (err) { console.log(err) }
+      callback(res);
+    });
+  };
   
-return new dbHandler();
+  dbHandler.prototype.getAllJobs = function(callback) {
+    var sql = 'SELECT * FROM jobs;';
+    this.projects_db.query(sql, function(err, res) {
+      if (err) { console.log(err) }
+      callback(res);
+    });
+  };
+  
+  return new dbHandler();
 };
