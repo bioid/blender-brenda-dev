@@ -75,7 +75,7 @@ Processes.prototype.submitJob = function(client, jobargs, callback) {
       } else if (jobargs.jobtype == 'bake') {
         args = [jobargs.project.name, jobargs.jobname, 'bake', '-e', jobargs.numobjects];
       }
-      var child = spawn(global.config.spawn_jobs, args); // change to brenda-work
+      var child = spawn(global.config.spawn_jobs, args); 
       this.children.push(child);
       child.stdout.on('data', function(data) {
         // emit stdout to the client who started this request
