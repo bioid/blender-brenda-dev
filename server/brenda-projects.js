@@ -5,7 +5,7 @@ module.exports = function() {
   var BrendaProjects = function() {
     this.projects = {};
     this.update(function() {
-      
+      // empty
     });
   };
   
@@ -24,15 +24,15 @@ module.exports = function() {
   
   BrendaProjects.prototype.updateJobs = function(callback) {
     global.dbHandler.getAllJobs(function(res) {
+      // loop through all of the jobs
       for (var i = 0; i < res.rows.length; i++) {
-        // loop through all of the jobs
-        for (var key in this.projects) {
+        for (var project in this.projects) {
           // check each project to see if it has a foreign key
           // associated with this job
-          if (this.projects.hasOwnProperty(key) && this.projects[key].project_id == res.rows[i].project_id) {
-            if (!this.projects[key].hasOwnProperty('jobs')) { this.projects[key].jobs = {}; }
-            // add the job to the project object
-            this.projects[key].jobs[res.rows[i].job_id] = res.rows[i];
+          if (this.projects.hasOwnProperty(project) && this.projects[project].project_id == res.rows[i].project_id) {
+            if (!this.projects[project].hasOwnProperty('jobs')) { this.projects[project].jobs = {}; }
+            // add the job to the jobs object
+            this.projects[project].jobs[res.rows[i].job_id] = res.rows[i];
           }
         }
       }
@@ -61,7 +61,6 @@ module.exports = function() {
     global.dbHandler.addProject(sanitizedName, function(res) {
       // next create the directory tree
       var pjpath = global.config.projects_dir + '/' + sanitizedName;
-      this.update();
       mkdirp(pjpath + '/data', function(err) {
         if (err) { console.log('error making dir', err); }
         mkdirp(pjpath + '/jobs', function(err2) {

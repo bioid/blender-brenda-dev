@@ -105,10 +105,15 @@ io.on('connection', function(client) {
     client.emit('regionconfigs', regions);
   });
   client.on('submitjob', function(data) {
+    // the client has submitted a new job
     console.log('job submit, data: ', data);
+    // add it to the db, which returns job_id
     BrendaProjects.addJob(data, function(job_id) {
+      // send it over to procs
       data.job_id = job_id;
       procs.submitJob(client, data, function() {
+        // the job has been submitted, update the projects object
+        // and send it back to the client
         BrendaProjects.update(function() {
           client.emit('projectupdate', BrendaProjects.projects);
         });
@@ -138,23 +143,5 @@ io.on('connection', function(client) {
     });
   });
 });
-
-
-// api routes
-
-// app.post('/api/upload:client_id', function(req, res) {
-//   var client_id = req.params.client_id;
-//   req.pipe(req.busboy);
-//   req.busboy.on('file', function(fieldname, file, filename) {
-//     console.log(global.config.jobdata_dir + filename);
-//     var fstream = fs.createWriteStream(global.config.jobdata_dir + filename); 
-//     file.pipe(fstream);
-//     fstream.on('close', function () {
-//         // file upload completed (hopefully)
-//         procs.buildJobFile(client_id, filename);
-//         res.redirect('back');
-//     });
-//   });
-// });
 
 console.log("server listening on", global.config.port);
