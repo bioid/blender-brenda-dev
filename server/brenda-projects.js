@@ -10,6 +10,8 @@ module.exports = function() {
   };
   
   BrendaProjects.prototype.updateProjects = function(callback) {
+    // Retrieves all of the projects in the database,
+    // and adds them to this.projects
     global.dbHandler.getAllProjects(function(res) {
       for (var i = 0; i < res.rows.length; i++) {
         if (!this.projects.hasOwnProperty(res.rows[i].name)) {
@@ -23,9 +25,13 @@ module.exports = function() {
   BrendaProjects.prototype.updateJobs = function(callback) {
     global.dbHandler.getAllJobs(function(res) {
       for (var i = 0; i < res.rows.length; i++) {
+        // loop through all of the jobs
         for (var key in this.projects) {
+          // check each project to see if it has a foreign key
+          // associated with this job
           if (this.projects.hasOwnProperty(key) && this.projects[key].project_id == res.rows[i].project_id) {
             if (!this.projects[key].hasOwnProperty('jobs')) { this.projects[key].jobs = {}; }
+            // add the job to the project object
             this.projects[key].jobs[res.rows[i].job_id] = res.rows[i];
           }
         }
@@ -35,6 +41,7 @@ module.exports = function() {
   };
 
   BrendaProjects.prototype.update = function(callback) {
+    // checks through the db and updates this.projects
     this.updateProjects(function() {
       this.updateJobs(function() {
         callback();
@@ -48,8 +55,11 @@ module.exports = function() {
   };
   
   BrendaProjects.prototype.addProject = function(name, callback) {
+    // sanitize the project name
     var sanitizedName = this.sanitizeString(name);
+    // now add it to the db
     global.dbHandler.addProject(sanitizedName, function(res) {
+      // next create the directory tree
       var pjpath = global.config.projects_dir + '/' + sanitizedName;
       this.update();
       mkdirp(pjpath + '/data', function(err) {
