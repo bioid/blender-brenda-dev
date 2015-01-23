@@ -58,9 +58,10 @@ module.exports = function() {
   };
   
   BrendaProjects.prototype.addJob = function(jobName, project, callback) {
-    global.dbHandler.addJob(jobName, project, function(res) {
+    global.dbHandler.addJob(jobName, project, function(job_id) {
       this.update();
-      callback();
+      console.log('job added to db - response', job_id);
+      callback(job_id);
     }.bind(this));
   };
 

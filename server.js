@@ -105,7 +105,8 @@ io.on('connection', function(client) {
   });
   client.on('submitjob', function(data) {
     console.log('job submit, data: ', data);
-    BrendaProjects.addJob(data.jobname, data.project, function() {
+    BrendaProjects.addJob(data.jobname, data.project, function(job_id) {
+      data.job_id = job_id;
       procs.submitJob(client, data, function() {
         client.emit('projectupdate', BrendaProjects.projects);
       });

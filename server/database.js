@@ -26,7 +26,7 @@ module.exports = function() {
     var sql = 'INSERT INTO jobs(job_name, project_id) VALUES(?, ?);';
     this.projects_db.query(sql, [jobName, project.project_id], function(err, res) {
       if (err) { console.log(err) }
-      callback(res);
+      callback(res.lastInsertId);
     });
   };
   
@@ -37,6 +37,15 @@ module.exports = function() {
       callback(res);
     });
   };
+  
+  dbHandler.prototype.addConfToJob = function(conf_id, job_id, callback) {
+    var sql = "UPDATE jobs SET conf_id = ? WHERE job_id = ?";
+    this.projects_db.query(sql, [conf_id, job_id]), function(err, res) {
+      if (err) { console.log(err); }
+      console.log(res);
+      callback();
+    }
+  }
   
   dbHandler.prototype.addBrendaConf = function(opts, callback) {
     var fields = [
@@ -66,8 +75,11 @@ module.exports = function() {
     this.projects_db.query(sql, values, function(err, res) {
       if (err) { console.log(err) }
       console.log(res);
-      callback();
-    });
+      var conf_id = res.lastInsertId;
+      this.addConfToJob(conf_id, opts.job_id, function() {
+        callback();
+      });
+    }.bind(this));
   };
   
   return new dbHandler();
