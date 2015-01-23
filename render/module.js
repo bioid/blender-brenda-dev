@@ -1,4 +1,8 @@
 /*jshint ignore:start*/
+
+// This is the main controller for our front-end panel. It is getting a bit
+// unwieldly and should be broken up into separate modules in the future.
+
 require.config({
   paths: {
     socketio: '/socket.io/socket.io'
@@ -168,14 +172,14 @@ define([
       $scope.selectedProject = data;
     });
     socket.on('blenderFileUpdate', function(data) {
-      $scope.blenderFiles = []
+      $scope.blenderFiles = [];
       for (var i = 0; i < data.length; i++) {
         var parts = data[i].split('/data/');
         $scope.blenderFiles.push(parts[1]);
       }
       $scope.renderOpts.blenderFile = $scope.blenderFiles[0];
       $scope.checking_files = false;
-    })
+    });
     socket.on('regionconfigs', function(data) {
       $scope.regions = data;
       $scope.instanceArgs.region = $scope.regions[0];
@@ -252,8 +256,8 @@ define([
       renderPercentage: 100,
       samples: 1500,
       device: 'GPU'
-    }
-    $scope.devices = ['CPU', 'GPU']
+    };
+    $scope.devices = ['CPU', 'GPU'];
     $scope.newProject = false;
     var InstanceCount = function(value) {
       var num = value;
@@ -274,24 +278,7 @@ define([
     };
     $scope.percent = 0;
     $scope.instancePrices = {};
-    $scope.uploadFile = function(files) {
-      var uploadUrl = '/api/upload' + $scope.client_id;
-      var fd = new FormData;
-      var xhr = new XMLHttpRequest;
-      
-      fd.append("file", files[0]);
-      
-      xhr.upload.onprogress = function(ev) {
-        $scope.$apply(function() {
-          $scope.percent = 'percent: ' + parseInt(100.0 * ev.loaded / ev.total, 10);
-        })
-      };
-      xhr.upload.onload = function(ev) {
-        $scope.percent = 'upload finished';
-      };
-      xhr.open('POST', uploadUrl);
-      xhr.send(fd);
-    };
+
     $scope.submitJob = function() {
       console.log($scope.jobtype, $scope.animationArgs);
       if ($scope.jobtype.value == 'frames') {
@@ -328,7 +315,7 @@ define([
         $scope.instancePrices[$scope.instanceArgs.instancetype] = {};
       }
       if ($scope.client_id) {
-        socket.emit('checkprice', $scope.instanceArgs)
+        socket.emit('checkprice', $scope.instanceArgs);
       }
     };
     $scope.getEstimatedPrices = function() {
@@ -347,15 +334,15 @@ define([
     $scope.getEstimatedCurrentPrice = function() {
       var prices = $scope.getEstimatedPrices();
       return prices[0];
-    }
+    };
     $scope.getEstimatedMaxPrice = function() {
       var prices = $scope.getEstimatedPrices();
       return prices[1];
-    }
+    };
     $scope.isMaxPriceHighEnough = function() {
       var prices = $scope.getEstimatedPrices();
       return (prices[0] != '0.0000' && parseFloat(prices[0]) < parseFloat(prices[1]));
-    }
+    };
     $scope.addProject = function(newProject) {
       if ($scope.client_id) {
         socket.emit('addProject', newProject);
@@ -371,7 +358,7 @@ define([
         return true;  
       }
       return false;
-    }
+    };
     $scope.scrollDebugToBottom = function() {
       setTimeout(function() {
         var stdout = document.getElementById('stdout');
@@ -379,7 +366,7 @@ define([
           stdout.scrollTop = stdout.scrollHeight;
         }
       }, 0);
-    }
+    };
     $scope.init = function() {
       panelSrv.init(this);
       // Fetch default instance type price data on init
