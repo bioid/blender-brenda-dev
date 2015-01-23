@@ -96,6 +96,7 @@ io.on('connection', function(client) {
   console.log('client', client.id, 'connected');
   client.emit('projectupdate', BrendaProjects.projects);
   procs.getRegionConfigs(function(files) {
+    // move this to getRegionConfigs()
     var regions = [];
     for (var i = 0; i < files.length; i++) {
       var parts = files[i].split('/');
@@ -105,10 +106,12 @@ io.on('connection', function(client) {
   });
   client.on('submitjob', function(data) {
     console.log('job submit, data: ', data);
-    BrendaProjects.addJob(data.jobname, data.project, function(job_id) {
+    BrendaProjects.addJob(data, function(job_id) {
       data.job_id = job_id;
       procs.submitJob(client, data, function() {
-        client.emit('projectupdate', BrendaProjects.projects);
+        BrendaProjects.update(function() {
+          client.emit('projectupdate', BrendaProjects.projects);
+        });
       });
     });
   });

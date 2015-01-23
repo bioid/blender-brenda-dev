@@ -4,7 +4,9 @@ module.exports = function() {
 
   var BrendaProjects = function() {
     this.projects = {};
-    this.update();
+    this.update(function() {
+      
+    });
   };
   
   BrendaProjects.prototype.updateProjects = function(callback) {
@@ -18,22 +20,25 @@ module.exports = function() {
     }.bind(this));
   };
   
-  BrendaProjects.prototype.updateJobs = function() {
+  BrendaProjects.prototype.updateJobs = function(callback) {
     global.dbHandler.getAllJobs(function(res) {
       for (var i = 0; i < res.rows.length; i++) {
         for (var key in this.projects) {
           if (this.projects.hasOwnProperty(key) && this.projects[key].project_id == res.rows[i].project_id) {
             if (!this.projects[key].hasOwnProperty('jobs')) { this.projects[key].jobs = {}; }
-            this.projects[key].jobs[res.rows[i].job_name] = res.rows[i];
+            this.projects[key].jobs[res.rows[i].job_id] = res.rows[i];
           }
         }
       }
+      callback();
     }.bind(this));
   };
-  
-  BrendaProjects.prototype.update = function() {
+
+  BrendaProjects.prototype.update = function(callback) {
     this.updateProjects(function() {
-      this.updateJobs(); 
+      this.updateJobs(function() {
+        callback();
+      }.bind(this)); 
     }.bind(this));
   };
   
@@ -57,9 +62,8 @@ module.exports = function() {
     }.bind(this));
   };
   
-  BrendaProjects.prototype.addJob = function(jobName, project, callback) {
-    global.dbHandler.addJob(jobName, project, function(job_id) {
-      this.update();
+  BrendaProjects.prototype.addJob = function(opts, callback) {
+    global.dbHandler.addJob(opts, function(job_id) {
       callback(job_id);
     }.bind(this));
   };

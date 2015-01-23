@@ -88,7 +88,7 @@ Processes.prototype.submitJob = function(client, jobargs, callback) {
       child.on('exit', function(code) {
         this.checkJobCount();
         this.removeChild(child);
-      callback();
+        callback();
       }.bind(this));
     }.bind(this));
   }.bind(this));

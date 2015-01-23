@@ -22,9 +22,9 @@ module.exports = function() {
     });
   };
   
-  dbHandler.prototype.addJob = function(jobName, project, callback) {
+  dbHandler.prototype.addJob = function(opts, callback) {
     var sql = 'INSERT INTO jobs(job_name, project_id) VALUES(?, ?);';
-    this.projects_db.query(sql, [jobName, project.project_id], function(err, res) {
+    this.projects_db.query(sql, [opts.jobName, opts.project.project_id], function(err, res) {
       if (err) { console.log(err) }
       callback(res.lastInsertId);
     });
@@ -38,23 +38,7 @@ module.exports = function() {
     });
   };
   
-  dbHandler.prototype.addConfToJob = function(conf_id, job_id, callback) {
-    var sql = "UPDATE jobs SET conf_id = ? WHERE job_id = ?";
-    this.projects_db.query(sql, [conf_id, job_id], function(err, res) {
-      if (err) { console.log(err); }
-      callback();
-    });
-  };
-  
   dbHandler.prototype.addBrendaConf = function(opts, callback) {
-    var fields = [
-        'blender_file',
-        'blender_render_resolution_x',
-        'blender_render_resolution_y',
-        'blender_render_resolution_percentage',
-        'blender_cycles_samples',
-        'blender_cycles_device'
-      ];
     var values = [
         opts.renderOpts.blenderFile,
         opts.renderOpts.renderResolutionX,
@@ -64,19 +48,20 @@ module.exports = function() {
         opts.renderOpts.device
       ];
     if (opts.jobtype == 'bake') {
-      fields.push('blender_bake_type', 'blender_bake_margin', 'blender_bake_uvlayer');
       values.push(opts.renderOpts.baketype, opts.renderOpts.bakemargin, opts.renderOpts.bakeuvlayer);
     }
-    var bakeValues = (opts.jobtype == 'bake') ? ', ?, ?, ?' : '';
-    var sql = 'INSERT INTO brendaconfs(' + fields.join(', ') + ') VALUES (?, ?, ?, ?, ?, ? '+ bakeValues + ');';
+    values.push(opts.job_id);
+    
+    var bakeValues = (opts.jobtype == 'bake') ? ', blender_bake_type = ?, blender_bake_margin = ?, blender_bake_uvlayer = ?' : '';
 
+    var sql = 'UPDATE jobs SET blender_file = ?, blender_render_resolution_x = ?, \
+    blender_render_resolution_y = ?, blender_render_resolution_percentage = ?, \
+    blender_cycles_samples = ?, blender_cycles_device = ?' + bakeValues + ' WHERE job_id = ?';
+    
     this.projects_db.query(sql, values, function(err, res) {
       if (err) { console.log(err) }
       console.log(res);
-      var conf_id = res.lastInsertId;
-      this.addConfToJob(conf_id, opts.job_id, function() {
-        callback();
-      });
+      callback();
     }.bind(this));
   };
   
