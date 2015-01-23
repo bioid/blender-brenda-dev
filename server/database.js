@@ -40,12 +40,11 @@ module.exports = function() {
   
   dbHandler.prototype.addConfToJob = function(conf_id, job_id, callback) {
     var sql = "UPDATE jobs SET conf_id = ? WHERE job_id = ?";
-    this.projects_db.query(sql, [conf_id, job_id]), function(err, res) {
+    this.projects_db.query(sql, [conf_id, job_id], function(err, res) {
       if (err) { console.log(err); }
-      console.log(res);
       callback();
-    }
-  }
+    });
+  };
   
   dbHandler.prototype.addBrendaConf = function(opts, callback) {
     var fields = [
@@ -70,8 +69,7 @@ module.exports = function() {
     }
     var bakeValues = (opts.jobtype == 'bake') ? ', ?, ?, ?' : '';
     var sql = 'INSERT INTO brendaconfs(' + fields.join(', ') + ') VALUES (?, ?, ?, ?, ?, ? '+ bakeValues + ');';
-    console.log(sql);
-    
+
     this.projects_db.query(sql, values, function(err, res) {
       if (err) { console.log(err) }
       console.log(res);
