@@ -23,9 +23,9 @@ module.exports = function() {
   };
   
   dbHandler.prototype.addJob = function(opts, callback) {
-    var values = [opts.jobname, opts.project.project_id, opts.jobtype];
-    var fields = ['job_name', 'project_id', 'job_type'];
-    var placeholders = ['?', '?', '?'];
+    var values = [opts.jobname, opts.project.project_id, opts.jobtype, Date.now()];
+    var fields = ['job_name', 'project_id', 'job_type', 'start_time'];
+    var placeholders = ['?', '?', '?', '?'];
     console.log('opts', opts);
     if (opts.jobtype == 'animation') {
       var animationValues = [opts.start, opts.end];

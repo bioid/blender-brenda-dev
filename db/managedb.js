@@ -31,12 +31,16 @@ if (argv.createdb) {
                       '( job_id INTEGER PRIMARY KEY,' +
                       'job_name VARCHAR(100),' +
                       'project_id INT,' +
-                      'job_type,' +
+                      'job_type VARCHAR(15),' +
                       'start_frame INT,' +
                       'end_frame INT,' +
-                      'tiles_x,' +
-                      'tiles_y,' +
-                      'num_objects,' +
+                      'tiles_x INT,' +
+                      'tiles_y, INT,' +
+                      'num_objects INT,' +
+                      'start_time INT,' +
+                      // times are MILLISECONDS since epoch 
+                      //(divide by 1000 and floor for unix time)
+                      'end_time INT,' +
                       'blender_file VARCHAR(100),' +
                       'blender_render_resolution_x INTEGER,' +
                       'blender_render_resolution_y INTEGER,' +
