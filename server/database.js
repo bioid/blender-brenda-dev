@@ -24,7 +24,7 @@ module.exports = function() {
   
   dbHandler.prototype.addJob = function(opts, callback) {
     var sql = 'INSERT INTO jobs(job_name, project_id) VALUES(?, ?);';
-    this.projects_db.query(sql, [opts.jobName, opts.project.project_id], function(err, res) {
+    this.projects_db.query(sql, [opts.jobname, opts.project.project_id], function(err, res) {
       if (err) { console.log(err) }
       callback(res.lastInsertId);
     });

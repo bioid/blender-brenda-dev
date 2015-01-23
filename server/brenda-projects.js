@@ -63,6 +63,8 @@ module.exports = function() {
   };
   
   BrendaProjects.prototype.addJob = function(opts, callback) {
+    // sanitize the jobname
+    opts.jobname = this.sanitizeString(opts.jobname);
     global.dbHandler.addJob(opts, function(job_id) {
       callback(job_id);
     }.bind(this));
