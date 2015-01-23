@@ -13,9 +13,11 @@ module.exports = function() {
     // Retrieves all of the projects in the database,
     // and adds them to this.projects
     global.dbHandler.getAllProjects(function(res) {
-      for (var i = 0; i < res.rows.length; i++) {
-        if (!this.projects.hasOwnProperty(res.rows[i].name)) {
-          this.projects[res.rows[i].name] = res.rows[i];
+      if (res.rows) {
+        for (var i = 0; i < res.rows.length; i++) {
+          if (!this.projects.hasOwnProperty(res.rows[i].name)) {
+            this.projects[res.rows[i].name] = res.rows[i];
+          }
         }
       }
       callback();
@@ -65,7 +67,9 @@ module.exports = function() {
         if (err) { console.log('error making dir', err); }
         mkdirp(pjpath + '/jobs', function(err2) {
           if (err2) { console.log('error making dir', err2); }
-          callback(sanitizedName);
+          this.update(function() {
+            callback(sanitizedName);
+          });
         }.bind(this));
       }.bind(this));
     }.bind(this));

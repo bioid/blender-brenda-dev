@@ -23,8 +23,32 @@ module.exports = function() {
   };
   
   dbHandler.prototype.addJob = function(opts, callback) {
-    var sql = 'INSERT INTO jobs(job_name, project_id) VALUES(?, ?);';
-    this.projects_db.query(sql, [opts.jobname, opts.project.project_id], function(err, res) {
+    var values = [opts.jobname, opts.project.project_id, opts.jobtype];
+    var fields = ['job_name', 'project_id', 'job_type'];
+    var placeholders = ['?', '?', '?'];
+    console.log('opts', opts);
+    if (opts.jobtype == 'animation') {
+      var animationValues = [opts.start, opts.end];
+      fields.push('start_frame', 'end_frame');
+      placeholders.push('?', '?');
+      
+      if (opts.subframe) {
+        animationValues.push(opts.tileX, opts.tilesY);
+        fields.push('tiles_x', 'tiles_y');
+        placeholders.push('?', '?');
+      }
+      values = values.concat(animationValues);
+    }
+    else if (opts.jobtype == 'bake') {
+      values.push(opts.numobjects);
+      fields.push('num_objects');
+      placeholders.push('?');
+    }
+    
+    var sql = 'INSERT INTO jobs('+ fields.join(', ') +') VALUES('+ placeholders.join(', ') +');';
+    console.log(sql);
+    console.log(values);
+    this.projects_db.query(sql, values, function(err, res) {
       if (err) { console.log(err) }
       callback(res.lastInsertId);
     });
@@ -60,7 +84,6 @@ module.exports = function() {
     
     this.projects_db.query(sql, values, function(err, res) {
       if (err) { console.log(err) }
-      console.log(res);
       callback();
     }.bind(this));
   };

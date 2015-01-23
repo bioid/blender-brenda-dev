@@ -31,15 +31,21 @@ if (argv.createdb) {
                       '( job_id INTEGER PRIMARY KEY,' +
                       'job_name VARCHAR(100),' +
                       'project_id INT,' +
-                     'blender_file VARCHAR(100),' +
-                     'blender_render_resolution_x INTEGER,' +
-                     'blender_render_resolution_y INTEGER,' +
-                     'blender_render_resolution_percentage INTEGER,' +
-                     'blender_cycles_samples INTEGER,' +
-                     'blender_cycles_device VARCHAR(100),' +
-                     'blender_bake_type VARCHAR(100),' +
-                     'blender_bake_margin VARCHAR(100),' +
-                     'blender_bake_uvlayer VARCHAR(100),' +
+                      'job_type,' +
+                      'start_frame INT,' +
+                      'end_frame INT,' +
+                      'tiles_x,' +
+                      'tiles_y,' +
+                      'num_objects,' +
+                      'blender_file VARCHAR(100),' +
+                      'blender_render_resolution_x INTEGER,' +
+                      'blender_render_resolution_y INTEGER,' +
+                      'blender_render_resolution_percentage INTEGER,' +
+                      'blender_cycles_samples INTEGER,' +
+                      'blender_cycles_device VARCHAR(100),' +
+                      'blender_bake_type VARCHAR(100),' +
+                      'blender_bake_margin VARCHAR(100),' +
+                      'blender_bake_uvlayer VARCHAR(100),' +
                       'FOREIGN KEY (project_id) REFERENCES projects(project_id));';
 
     db.query(create_projects, function(err, res) {
