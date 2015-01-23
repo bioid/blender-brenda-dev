@@ -45,10 +45,11 @@ Processes.prototype.buildConfig = function(opts, callback) {
     'BLENDER_CYCLES_SAMPLES=' + opts.renderOpts.samples,
     'BLENDER_CYCLES_DEVICE=' + opts.renderOpts.device
     ];
+
   if (opts.jobtype == "bake") {
-    var baketype = opts.baketype || 'COMBINED',
-        bakemargin = opts.bakemargin || 0,
-        bakeuvlayer = opts.bakeuvlayer || 'LightMap';
+    var baketype = opts.renderOpts.baketype = opts.baketype || 'COMBINED',
+        bakemargin = opts.renderOpts.bakemargin = opts.bakemargin || 0,
+        bakeuvlayer = opts.renderOpts.bakeuvlayer = opts.bakeuvlayer || 'LightMap';
     configLines.push('BLENDER_BAKE_TYPE=' + baketype);
     configLines.push('BLENDER_BAKE_MARGIN=' + bakemargin);
     configLines.push('BLENDER_BAKE_UVLAYER=' + bakeuvlayer);
@@ -58,7 +59,9 @@ Processes.prototype.buildConfig = function(opts, callback) {
   var path = global.config.projects_dir + '/' + opts.project.name + '/jobs/' + opts.jobname + '/scratch/brenda-job.conf';
   fs.writeFile(path, configText, function(err) {
     if (err) { console.log(err) } 
-    callback();
+    global.dbHandler.addBrendaConf(opts, function() {
+      callback();
+    })
   });
 };
 

@@ -38,10 +38,6 @@ module.exports = function() {
     });
   };
   
-  dbHandler.prototype.linkConfToJob = function(opts, callback) {
-    
-  };
-  
   dbHandler.prototype.addBrendaConf = function(opts, callback) {
     var fields = [
         'blender_file',
@@ -63,10 +59,11 @@ module.exports = function() {
       fields.push('blender_bake_type', 'blender_bake_margin', 'blender_bake_uvlayer');
       values.push(opts.renderOpts.baketype, opts.renderOpts.bakemargin, opts.renderOpts.bakeuvlayer);
     }
-    var options = [fields.join(', '), values.join(', ')];
-    var sql = 'INSERT INTO brendaconfs(?) VALUES (?);';
+    var bakeValues = (opts.jobtype == 'bake') ? ', ?, ?, ?' : '';
+    var sql = 'INSERT INTO brendaconfs(' + fields.join(', ') + ') VALUES (?, ?, ?, ?, ?, ? '+ bakeValues + ');';
+    console.log(sql);
     
-    this.projects_db.query(sql, options, function(err, res) {
+    this.projects_db.query(sql, values, function(err, res) {
       if (err) { console.log(err) }
       console.log(res);
       callback();
