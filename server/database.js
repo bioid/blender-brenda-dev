@@ -33,7 +33,7 @@ module.exports = function() {
       placeholders.push('?', '?');
       
       if (opts.subframe) {
-        animationValues.push(opts.tileX, opts.tilesY);
+        animationValues.push(opts.tilesX, opts.tilesY);
         fields.push('tiles_x', 'tiles_y');
         placeholders.push('?', '?');
       }
