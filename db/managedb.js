@@ -22,8 +22,9 @@ if (argv.createdb) {
                       '( job_id INTEGER PRIMARY KEY,' +
                       'job_name VARCHAR(100),' +
                       'project_id INT,' +
-                      'FOREIGN KEY (project_id) REFERENCES projects(project_id)),' +
-                      'FOREIGN KEY (conf_id) REFERENCES brendaconfs(conf_id);';
+                      'conf_id INT,' + 
+                      'FOREIGN KEY (project_id) REFERENCES projects(project_id),' +
+                      'FOREIGN KEY (conf_id) REFERENCES brendaconfs(conf_id));';
                       
     var create_brendaconfs = 'CREATE TABLE brendaconfs' +
                              '( conf_id INTEGER PRIMARY KEY,' + 
@@ -39,25 +40,31 @@ if (argv.createdb) {
                              'blender_cycles_device VARCHAR(100),' +
                              'blender_bake_type VARCHAR(100),' +
                              'blender_bake_margin VARCHAR(100),' +
-                             'blender_bake_uvlayer VARCHAR(100);';
+                             'blender_bake_uvlayer VARCHAR(100));';
     
     db.query(create_projects, function(err, res) {
       if (err) { console.log(err); }
-      console.log('projects table created');
-      console.log(res);
-    });
-    
-    db.query(create_jobs, function(err, res) {
-      if (err) { console.log(err); }
-      console.log('jobs table created');
-      console.log(res);
+      else {
+        console.log('projects table created');
+        console.log(res);
+      }
     });
     
     db.query(create_brendaconfs, function(err, res) {
       if (err) { console.log(err); }
-      console.log('brendaconfs table created');
-      console.log(res);
+      else {
+        console.log('brendaconfs table created');
+        console.log(res);
+        db.query(create_jobs, function(err, res) {
+          if (err) { console.log(err); }
+          else {
+            console.log('jobs table created');
+            console.log(res);
+          }
+        });
+      }
     });
+    
   }
   else {
     console.log('projects.db already exists');
