@@ -9,6 +9,15 @@ if (!global.config) {
   global.config = require('../config/serverconfig.js');
 }
 
+if (argv.query) {
+  var db = anyDB.createConnection('sqlite3://' + global.config.projects_dir + '/projects.db');
+  db.query(argv.query, function(err, res) {
+    if (err) { console.log(err); }
+    console.log(res);
+  });
+  
+}
+
 if (argv.createdb) {
   if (!fs.existsSync(global.config.projects_dir + '/projects.db')) {
     console.log('Creating projects.db');

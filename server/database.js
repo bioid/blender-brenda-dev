@@ -38,5 +38,40 @@ module.exports = function() {
     });
   };
   
+  dbHandler.prototype.linkConfToJob = function(opts, callback) {
+    
+  };
+  
+  dbHandler.prototype.addBrendaConf = function(opts, callback) {
+    var fields = [
+        'blender_file',
+        'blender_render_resolution_x',
+        'blender_render_resolution_y',
+        'blender_render_resolution_percentage',
+        'blender_cycles_samples',
+        'blender_cycles_device'
+      ];
+    var values = [
+        opts.renderOpts.blenderFile,
+        opts.renderOpts.renderResolutionX,
+        opts.renderOpts.renderResolutionY,
+        opts.renderOpts.renderPercentage,
+        opts.renderOpts.samples,
+        opts.renderOpts.device
+      ];
+    if (opts.jobtype == 'bake') {
+      fields.push('blender_bake_type', 'blender_bake_margin', 'blender_bake_uvlayer');
+      values.push(opts.renderOpts.baketype, opts.renderOpts.bakemargin, opts.renderOpts.bakeuvlayer);
+    }
+    var options = [fields.join(', '), values.join(', ')];
+    var sql = 'INSERT INTO brendaconfs(?) VALUES (?);';
+    
+    this.projects_db.query(sql, options, function(err, res) {
+      if (err) { console.log(err) }
+      console.log(res);
+      callback();
+    });
+  };
+  
   return new dbHandler();
 };
