@@ -1,5 +1,5 @@
 <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-<div id="render-panel" ng-controller='render' ng-init="tab = 'joblist'">
+<div id="render-panel" ng-controller='render' ng-init="tab = 'jobqueue'">
     <link rel="stylesheet" type="text/css" href="/app/panels/render/stylesheet.css" />
     <!-- Add project modal -->
     <script type="text/ng-template" id="AddProjectModal.html">
@@ -201,17 +201,6 @@
                                 <dt>bake uvlayer</dt><dd> {{ job.blender_bake_uvlayer }}</dd>
                             </div>
                         </dl>
-                    
-                        <!--<table id="job-details">-->
-                        <!--    <tr>-->
-                        <!--        <td>blendfile</td>-->
-                        <!--        <td>Render Res </td>-->
-                        <!--    </tr>-->
-                        <!--    <tr>-->
-                        <!--        <td>{{ job.blender_file }}</td>-->
-                        <!--        <td>{{ job.blender_render_resolution_x }} x {{ job.blender_render_resolution_y }} </td>-->
-                        <!--    </tr>-->
-                        <!--</table>-->
                     </td>
                     <td>
                         <dl class="dl-horizontal">
