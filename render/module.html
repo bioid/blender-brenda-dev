@@ -1,5 +1,5 @@
 <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-<div id="render-panel" ng-controller='render' ng-init="tab = 'jobqueue'">
+<div id="render-panel" ng-controller='render' ng-init="tab = 'joblist'">
     <link rel="stylesheet" type="text/css" href="/app/panels/render/stylesheet.css" />
     <!-- Add project modal -->
     <script type="text/ng-template" id="AddProjectModal.html">
@@ -164,12 +164,73 @@
             </form>
         </div>
     </div>
+    <!-- Job List -->
     <div id="joblist" class="job_list" ng-show="tab == 'joblist'">
-        <li ng-repeat="(project_id, name) in projects">
-            {{ project_id }}: <ul ng-repeat="job in name.jobs">
-                {{ job }}
-            </ul> 
-        </li>
+        <div ng-repeat="(project_id, name) in projects">
+            {{ project_id }}: 
+            <table class="table table-bordered table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th>jobname</th>
+                        <th>type</th>
+                        <th>time started</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                <tr ng-repeat-start="job in name.jobs">
+                    <td>
+                        <button ng-if="job.expanded" ng-click="job.expanded = false" class="btn btn-info btn-mini"><span class="icon-minus"></span></button>
+                        <button ng-if="!job.expanded" ng-click="job.expanded = true" class="btn btn-info btn-mini"><span class="icon-plus"></span></button>
+                        {{ job.job_name }}
+                    </td>
+                    <td>{{ job.job_type}}</td>
+                    <td>{{ convertDate(job.start_time) }}</td>
+                </tr> 
+                <tr ng-if="job.expanded" ng-repeat-end="">
+                    <td>
+                        <p class="text-center">brenda-job.conf</p>
+                        <dl class="dl-horizontal">
+                            <dt>blend file</dt> <dd>{{ job.blender_file }}</dd>
+                            <dt>resolution</dt> <dd>{{ job.blender_render_resolution_x }} x {{ job.blender_render_resolution_y }} @ {{  job.blender_render_resolution_percentage }}%</dd>
+                            <dt>samples</dt>    <dd>{{ job.blender_cycles_samples }}</dd>
+                            <dt>device</dt>     <dd>{{ job.blender_cycles_device }}</dd>
+                            <div ng-if="job.job_type == 'bake'">
+                                <dt>bake type</dt><dd>{{ job.blender_bake_type }}</dd>
+                                <dt>bake margin</dt><dd>{{ job.blender_bake_margin }}</dd>
+                                <dt>bake uvlayer</dt><dd> {{ job.blender_bake_uvlayer }}</dd>
+                            </div>
+                        </dl>
+                    
+                        <!--<table id="job-details">-->
+                        <!--    <tr>-->
+                        <!--        <td>blendfile</td>-->
+                        <!--        <td>Render Res </td>-->
+                        <!--    </tr>-->
+                        <!--    <tr>-->
+                        <!--        <td>{{ job.blender_file }}</td>-->
+                        <!--        <td>{{ job.blender_render_resolution_x }} x {{ job.blender_render_resolution_y }} </td>-->
+                        <!--    </tr>-->
+                        <!--</table>-->
+                    </td>
+                    <td>
+                        <dl class="dl-horizontal">
+                            <div ng-if="job.job_type == 'animation'">
+                                <dt>start frame</dt><dd>{{ job.start_frame }}</dd>
+                                <dt>end frame</dt><dd>{{ job.end_frame }}</dd>
+                            </div>
+                            <div ng-if="job.tiles_x && job.tiles_y">
+                                <dt>tiles X</dt><dd>{{ job.tiles_x }}</dd>
+                                <dt>tiles Y</dt><dd>{{ job.tiles_y }}</dd>
+                            </div>
+                            <div ng-if="job.job_type == 'bake'">
+                                <dt>num objects</dt><dd>{{ job.num_objects }}</dd>
+                            </div>
+                        </dl>
+                    </td>
+                </tbody>
+            </table>
+        </div>
     </div>
     <div id="debug" ng-hide="tab == 'joblist'">
         <h3>Console</h3>

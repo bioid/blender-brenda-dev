@@ -367,6 +367,11 @@ define([
         }
       }, 0);
     };
+    $scope.convertDate = function(date) {
+      var converted = new Date(date);
+      return converted.toString();
+      
+    };
     $scope.init = function() {
       panelSrv.init(this);
       // Fetch default instance type price data on init

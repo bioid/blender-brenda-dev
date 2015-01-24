@@ -35,7 +35,7 @@ if (argv.createdb) {
                       'start_frame INT,' +
                       'end_frame INT,' +
                       'tiles_x INT,' +
-                      'tiles_y, INT,' +
+                      'tiles_y INT,' +
                       'num_objects INT,' +
                       'start_time INT,' +
                       // times are MILLISECONDS since epoch 
