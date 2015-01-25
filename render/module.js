@@ -124,6 +124,16 @@ define([
       }
     };
   });
+  module.filter("toArray", function(){
+    return function(obj) {
+      var result = [];
+      angular.forEach(obj, function(val, key) {
+        result.push(val);
+      });
+      return result;
+    };
+  });
+  
   module.controller('render', function($scope, $http, $modal, socket, panelSrv) {
     // panel setup
     $scope.panelMeta = {
@@ -370,7 +380,20 @@ define([
     $scope.convertDate = function(date) {
       var converted = new Date(date);
       return converted.toString();
-      
+    };
+    $scope.sort = {
+      column: '',
+      descending: false
+    };
+    $scope.changeSort = function(column) {
+      var sort = $scope.sort;
+      if (sort.column == column) {
+        sort.descending = !sort.descending;
+      }
+      else {
+        sort.column = column;
+        sort.descending = false;
+      }
     };
     $scope.init = function() {
       panelSrv.init(this);
