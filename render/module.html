@@ -173,15 +173,15 @@
                     <tr>
                         <th ng-click="changeSort('job_name')">
                             jobname
-                            <div ng-if="sort.column == 'job_name'" ng-class="{'icon-chevron-down':!sort.descending, 'icon-chevron-up':sort.descending}"></div>
+                            <div ng-if="sort.column == 'job_name'" ng-class="{'icon-chevron-down':sort.descending, 'icon-chevron-up':!sort.descending}"></div>
                         </th>
                         <th ng-click="changeSort('job_type')">
                             type
-                            <div ng-if="sort.column == 'job_type'" ng-class="{'icon-chevron-down':!sort.descending, 'icon-chevron-up':sort.descending}"></div>
+                            <div ng-if="sort.column == 'job_type'" ng-class="{'icon-chevron-down':sort.descending, 'icon-chevron-up':!sort.descending}"></div>
                         </th>
                         <th ng-click="changeSort('start_time')">
                             time started
-                            <div ng-if="sort.column == 'start_time'" ng-class="{'icon-chevron-down':!sort.descending, 'icon-chevron-up':sort.descending}"></div>
+                            <div ng-if="sort.column == 'start_time'" ng-class="{'icon-chevron-down':sort.descending, 'icon-chevron-up':!sort.descending}"></div>
                         </th>
                     </tr>
                 </thead>
