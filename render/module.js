@@ -176,7 +176,9 @@ define([
       $scope.instancePrices[$scope.instanceArgs.instancetype] = data;
     });
     socket.on('projectupdate', function(data) {
-      $scope.projects = data;
+      $scope.$evalAsync(function() {
+        $scope.projects = data;
+      });
     });
     socket.on('projectadded', function(data) {
       $scope.selectedProject = data;
@@ -361,6 +363,16 @@ define([
     $scope.getBlenderFiles = function() {
       $scope.checking_files = true;
       socket.emit('getBlenderFiles', $scope.selectedProject);
+    };
+    $scope.completeJob = function(proj, j) {
+      var data = {
+        project: { name: proj.name },
+        job: {
+          job_id: j.job_id,
+          job_name: j.job_name
+        }
+      };
+      socket.emit('completeJob', data);
     };
     // panel init
     $scope.disableJobSubmit = function() {

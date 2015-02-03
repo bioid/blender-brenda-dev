@@ -66,18 +66,19 @@ Processes.prototype.buildConfig = function(opts, callback) {
 };
 
 Processes.prototype.completeJob = function(client, opts, callback) {
-  var path = global.config + '/scripts/brenda/job-complete.sh';
+  var path = global.dirname + '/scripts/brenda/job-complete.sh';
   var args = [opts.project.name, opts.job.job_name];
   var child = spawn(path, args);
   this.children.push(child);
   child.stdout.on('data', function(data) {
-    console.log('stdout:', data);
+    console.log('stdout:', data.toString());
     client.emit('stdout', data.toString());
   });
   child.on('exit', function(code) {
     this.removeChild(child);
-    global.dbHandler.setDone(opts.job.job_id);
-    callback();
+    global.dbHandler.setDone(opts.job.job_id, function() {
+      callback();
+    });
   }.bind(this));
 };
 

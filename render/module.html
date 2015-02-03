@@ -183,6 +183,7 @@
                             time started
                             <div ng-if="sort.column == 'start_time'" ng-class="{'icon-chevron-down':sort.descending, 'icon-chevron-up':!sort.descending}"></div>
                         </th>
+                        <th>done</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -195,6 +196,10 @@
                     </td>
                     <td>{{ job.job_type}}</td>
                     <td>{{ convertDate(job.start_time) }}</td>
+                    <td>
+                        <button ng-if="!job.end_time" ng-click="completeJob(name, job)" class="btn btn-info btn-mini"><span class="icon-ok"></span></button>
+                        <div ng-if="job.end_time">{{ convertDate(job.end_time) }}</div>
+                    </td>
                 </tr> 
                 <tr ng-if="job.expanded" ng-repeat-end="">
                     <td>

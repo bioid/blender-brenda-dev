@@ -91,10 +91,9 @@ module.exports = function() {
   dbHandler.prototype.setDone = function(job, callback) {
     var time = Date.now();
     var sql = 'UPDATE jobs SET end_time = ? WHERE job_id = ?;';
-    this.projects_db.query(sql, [time, job.job_id], function(err, res) {
-      if (!err) {
-        callback();
-      }
+    this.projects_db.query(sql, [time, job], function(err, res) {
+      if (err) { console.log(err) }
+      callback();
     });
   };
   
