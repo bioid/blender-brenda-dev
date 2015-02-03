@@ -142,6 +142,14 @@ io.on('connection', function(client) {
       client.emit('blenderFileUpdate', files);
     });
   });
+  client.on('endJob', function(data) {
+    console.log('ending job', data.job.job_id);
+    procs.completeJob(client, data, function() {
+      BrendaProjects.update(function() {
+        client.emit('projectupdate', BrendaProjects.projects);
+      });
+    });
+  });
 });
 
 console.log("server listening on", global.config.port);

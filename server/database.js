@@ -88,5 +88,15 @@ module.exports = function() {
     }.bind(this));
   };
   
+  dbHandler.prototype.setDone = function(job, callback) {
+    var time = Date.now();
+    var sql = 'UPDATE jobs SET end_time = ? WHERE job_id = ?;';
+    this.projects_db.query(sql, [time, job.job_id], function(err, res) {
+      if (!err) {
+        callback();
+      }
+    });
+  };
+  
   return new dbHandler();
 };
