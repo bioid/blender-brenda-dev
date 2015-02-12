@@ -39,7 +39,7 @@ var session = express_session({
     saveUninitialized: true
   });
 require('./server/auth')(app, global.config, passport, basicStrategy, cParser, session);
-app.use(express.static(__dirname + '/grafana/dist')); 
+app.use(express.static(__dirname + '/static')); 
 
 app.use('/projects', serveIndex(global.config.projects_dir, {'icons': true}));
 app.use('/projects', serveStatic(global.config.projects_dir));
