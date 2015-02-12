@@ -1,14 +1,12 @@
 
-<html ng-app="render">
-    <head>
-        <script src="/socket.io/socket.io.js" type="text/javascript"></script>
-        <script src="/components/angular.min.js" type="text/javascript"></script>
-        <script src="/module.js" type="text/javascript"></script>
-    </head>
-    
-<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+<head>
+    <script src="/socket.io/socket.io.js" type="text/javascript"></script>
+    <script src="/components/angular.min.js" type="text/javascript"></script>
+    <script src="/module.js" type="text/javascript"></script>
+</head>
 
-<div id="render-panel" ng-controller='render' ng-init="tab = 'jobqueue'">
+<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+<div ng-app="render" id="render-panel" ng-controller="render" ng-init="tab = 'jobqueue'">
     <link rel="stylesheet" type="text/css" href="/stylesheet.css" />
     <!-- Add project modal -->
     <script type="text/ng-template" id="AddProjectModal.html">
@@ -75,7 +73,7 @@
                 <li>
                     <label for="job_project">Project</label>
                     <select id="job_project" class="input-sm" ng-model="selectedProject" ng-change="getBlenderFiles()" ng-options="k for (k, v) in projects"></select>
-                    <button ng-disabled="!connected" type="submit" class="btn btn-mini"><span class="icon-asterisk"></span></button>
+                    <button ng-disabled="!connected" type="submit" class="btn btn-mini" bs-modal="'AddProjectModal.html'"><span class="icon-asterisk"></span></button>
                 </li>
                 <li>
                     <label for="job_jobname">Job name</label>
@@ -131,16 +129,14 @@
                     <input type="number" min="1" ng-model="renderOpts.renderResolutionY" id="job_renderargs_resy" />
                 </li>
                 <li>
-                    <label for="job_renderargs_percentage">Percentage</label> 
-                    <input type="number" min="1" ng-model="renderOpts.renderPercentage" id="job_renderargs_percentage" />
+                    <label for="job_renderargs_percentage">Percentage</label> <input type="number" min="1" ng-model="renderOpts.renderPercentage" id="job_renderargs_percentage" />
                 </li>
                 <li>
-                    <label for="job_renderargs_samples">Samples</label> 
-                    <input type="number" min="1" ng-model="renderOpts.samples" id="job_renderargs_samples" />
+                    <label for="job_renderargs_samples">Samples</label> <input type="number" min="1" ng-model="renderOpts.samples" id="job_renderargs_samples" />
                 </li>
                 <li>
-                    <label for="job_renderargs_device">Device</label> 
-                    <select ng-model="renderOpts.device" ng-options="i for i in devices" />
+                    <label for="job_renderargs_device">Device</label>
+                    <select ng-model="renderOpts.device" ng-options="i for i in devices" id="job_renderargs_device"></select>
                 </li>
             </ul> 
         </div>
@@ -151,8 +147,7 @@
     <!-- Spawn Instances -->
     <div id="spawninstances" class="instance_args" ng-show="tab == 'instances'">
         <div class="renderopts">
-            <label for="instance_region">Region</label> 
-            <select id="instance_region" class="input-sm region" ng-change="getInstancePrice(instanceArgs.instancetype, true)" ng-model="instanceArgs.region" ng-options="r for r in regions" />
+            <label for="instance_region">Region</label> <select id="instance_region" class="input-sm region" ng-change="getInstancePrice(instanceArgs.instancetype, true)" ng-model="instanceArgs.region" ng-options="r for r in regions" />
             <form class="simple-form">
               <ul>
                 <li>
@@ -160,21 +155,18 @@
                     <select id="instance_type" class="input-sm instance_type" ng-change="getInstancePrice(instanceArgs.instancetype, true)" ng-model="instanceArgs.instancetype" ng-options="s for s in instancetypes" /></select><button ng-click="getInstancePrice(instanceArgs.instancetype)" ng-disabled="checking_price" class="btn btn-mini instance_price_refresh"><span ng-class="{'icon-refresh': !checking_price, 'icon-circle-arrow-down': checking_price}"></span></button></li>
                     <ul class="instance_prices">
                         <li ng-repeat="(zone, price) in instancePrices[instanceArgs.instancetype]" ng-class="{'btn-primary': zone == instanceArgs.availabilityzone}" class="btn btn-lg">
-                            <label>
-                                <input type="radio" name="availabilityzone" ng-model="instanceArgs.availabilityzone" value="{{zone}}" />
-                                <h4>{{zone}}</h4>
-                                <em class="instance_price">{{price}}</em>
-                            </label>
+                            <label><input type="radio" name="availabilityzone" ng-model="instanceArgs.availabilityzone" value="{{zone}}"><h4>{{zone}}</h4><em class="instance_price">{{price}}</em></label>
                         </li>
                     </ul>
                 </li>
+              
                 <li>
                     <input type="range" min="1" max="50" ng-model="instanceArgs.instancecount.num" /> 
                     <br>Spawn <input type="number" min="1" ng-model="instanceArgs.instancecount.num" size="3" id="instancecount" class='rangeinput' /> instances at $<input type="number" min="0.0001" step="0.0001" ng-model="instanceArgs.instanceprice" size="3" id="instanceprice" class='rangeinput' /> per hour
                 </li>
                 <li>Current Price: <strong class="estimated_price">${{ getEstimatedCurrentPrice() }}/hr</strong></li>
                 <li>Max Price: <strong class="estimated_price" ng-class="{price_toolow: !isMaxPriceHighEnough(), price_ok: isMaxPriceHighEnough()}">${{ getEstimatedMaxPrice() }}/hr</strong><input type="checkbox" class="cr1" ng-model="instanceArgs.dryrun" id="instance_args_dryrun"> <label class="cr1" for="instance_args_dryrun">Dry Run</label></li>
-                <li> <button type="submit"> Spawn Instances </button></li>
+                <li> <button type="submit" class="btn btn-primary btn-lg" bs-modal="'SpawnInstancesModal.html'"> Spawn Instances </button></li>
               </ul>
             </form>
         </div>
@@ -186,24 +178,14 @@
             <table class="table table-bordered table-condensed table-hover">
                 <thead>
                     <tr>
-                        <th ng-click="changeSort('job_name')">
-                            jobname
-                            <div ng-if="sort.column == 'job_name'" ng-class="{'icon-chevron-down':sort.descending, 'icon-chevron-up':!sort.descending}"></div>
-                        </th>
-                        <th ng-click="changeSort('job_type')">
-                            type
-                            <div ng-if="sort.column == 'job_type'" ng-class="{'icon-chevron-down':sort.descending, 'icon-chevron-up':!sort.descending}"></div>
-                        </th>
-                        <th ng-click="changeSort('start_time')">
-                            time started
-                            <div ng-if="sort.column == 'start_time'" ng-class="{'icon-chevron-down':sort.descending, 'icon-chevron-up':!sort.descending}"></div>
-                        </th>
-                        <th>done</th>
+                        <th>jobname</th>
+                        <th>type</th>
+                        <th>time started</th>
                     </tr>
                 </thead>
                 <tbody>
                     
-                <tr ng-repeat-start="job in name.jobs | toArray | orderBy:sort.column:sort.descending">
+                <tr ng-repeat-start="job in name.jobs">
                     <td>
                         <button ng-if="job.expanded" ng-click="job.expanded = false" class="btn btn-info btn-mini"><span class="icon-minus"></span></button>
                         <button ng-if="!job.expanded" ng-click="job.expanded = true" class="btn btn-info btn-mini"><span class="icon-plus"></span></button>
@@ -211,10 +193,6 @@
                     </td>
                     <td>{{ job.job_type}}</td>
                     <td>{{ convertDate(job.start_time) }}</td>
-                    <td>
-                        <button ng-if="!job.end_time" ng-click="completeJob(name, job)" class="btn btn-info btn-mini"><span class="icon-ok"></span></button>
-                        <div ng-if="job.end_time">{{ convertDate(job.end_time) }}</div>
-                    </td>
                 </tr> 
                 <tr ng-if="job.expanded" ng-repeat-end="">
                     <td>
@@ -257,4 +235,3 @@
         </ul>
     </div>
 </div>
-</html>
