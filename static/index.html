@@ -117,7 +117,7 @@
             </ul>
         </div>
         <div class="renderopts" id="brendaOptions">
-            <ul class="job_args simple-form">
+            <ul class="job_args">
                 <li>
                     <label for="job_renderargs_blenderfile">Job file</label>
                     <select id="job_renderargs_blenderfile" class="input-sm" ng-model="renderOpts.blenderFile" ng-options="i for i in blenderFiles" />
@@ -131,46 +131,50 @@
                     <input type="number" min="1" ng-model="renderOpts.renderResolutionY" id="job_renderargs_resy" />
                 </li>
                 <li>
-                    <label for="job_renderargs_percentage">Percentage</label> <input type="number" min="1" ng-model="renderOpts.renderPercentage" id="job_renderargs_percentage" />
+                    <label for="job_renderargs_percentage">Percentage</label> 
+                    <input type="number" min="1" ng-model="renderOpts.renderPercentage" id="job_renderargs_percentage" />
                 </li>
                 <li>
-                    <label for="job_renderargs_samples">Samples</label> <input type="number" min="1" ng-model="renderOpts.samples" id="job_renderargs_samples" />
+                    <label for="job_renderargs_samples">Samples</label> 
+                    <input type="number" min="1" ng-model="renderOpts.samples" id="job_renderargs_samples" />
                 </li>
                 <li>
-                    <label for="job_renderargs_device">Device</label> <select ng-model="renderOpts.device" ng-options="i for i in devices" />
+                    <label for="job_renderargs_device">Device</label> 
+                    <select ng-model="renderOpts.device" ng-options="i for i in devices" />
                 </li>
             </ul> 
         </div>
         <div class="render-footer">
-            <button ng-disabled="disableJobSubmit()" type="submit" class="btn btn-primary btn-lg" ng-click="submitJob()">Populate Jobs</button>
-            <!--<pre>{{ animationArgs }}</pre>-->
+            <button ng-disabled="disableJobSubmit()" type="submit" ng-click="submitJob()">Populate Jobs</button>
         </div>
     </div>
     <!-- Spawn Instances -->
     <div id="spawninstances" class="instance_args" ng-show="tab == 'instances'">
         <div class="renderopts">
-            <label for="instance_region">Region</label> <select id="instance_region" class="input-sm region" ng-change="getInstancePrice(instanceArgs.instancetype, true)" ng-model="instanceArgs.region" ng-options="r for r in regions" />
+            <label for="instance_region">Region</label> 
+            <select id="instance_region" class="input-sm region" ng-change="getInstancePrice(instanceArgs.instancetype, true)" ng-model="instanceArgs.region" ng-options="r for r in regions" />
             <form class="simple-form">
               <ul>
                 <li>
                     <label for="instance_type">Check Pricing</label>
                     <select id="instance_type" class="input-sm instance_type" ng-change="getInstancePrice(instanceArgs.instancetype, true)" ng-model="instanceArgs.instancetype" ng-options="s for s in instancetypes" /></select><button ng-click="getInstancePrice(instanceArgs.instancetype)" ng-disabled="checking_price" class="btn btn-mini instance_price_refresh"><span ng-class="{'icon-refresh': !checking_price, 'icon-circle-arrow-down': checking_price}"></span></button></li>
                     <ul class="instance_prices">
-    
-
                         <li ng-repeat="(zone, price) in instancePrices[instanceArgs.instancetype]" ng-class="{'btn-primary': zone == instanceArgs.availabilityzone}" class="btn btn-lg">
-                            <label><input type="radio" name="availabilityzone" ng-model="instanceArgs.availabilityzone" value="{{zone}}"><h4>{{zone}}</h4><em class="instance_price">{{price}}</em></label>
+                            <label>
+                                <input type="radio" name="availabilityzone" ng-model="instanceArgs.availabilityzone" value="{{zone}}" />
+                                <h4>{{zone}}</h4>
+                                <em class="instance_price">{{price}}</em>
+                            </label>
                         </li>
                     </ul>
                 </li>
-              
                 <li>
                     <input type="range" min="1" max="50" ng-model="instanceArgs.instancecount.num" /> 
                     <br>Spawn <input type="number" min="1" ng-model="instanceArgs.instancecount.num" size="3" id="instancecount" class='rangeinput' /> instances at $<input type="number" min="0.0001" step="0.0001" ng-model="instanceArgs.instanceprice" size="3" id="instanceprice" class='rangeinput' /> per hour
                 </li>
                 <li>Current Price: <strong class="estimated_price">${{ getEstimatedCurrentPrice() }}/hr</strong></li>
                 <li>Max Price: <strong class="estimated_price" ng-class="{price_toolow: !isMaxPriceHighEnough(), price_ok: isMaxPriceHighEnough()}">${{ getEstimatedMaxPrice() }}/hr</strong><input type="checkbox" class="cr1" ng-model="instanceArgs.dryrun" id="instance_args_dryrun"> <label class="cr1" for="instance_args_dryrun">Dry Run</label></li>
-                <li> <button type="submit" class="btn btn-primary btn-lg"></button>> Spawn Instances </button></li>
+                <li> <button type="submit"> Spawn Instances </button></li>
               </ul>
             </form>
         </div>
