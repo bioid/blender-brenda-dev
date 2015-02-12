@@ -73,7 +73,11 @@
                 <li>
                     <label for="job_project">Project</label>
                     <select id="job_project" class="input-sm" ng-model="selectedProject" ng-change="getBlenderFiles()" ng-options="k for (k, v) in projects"></select>
-                    <button ng-disabled="!connected" type="submit" class="btn btn-mini" bs-modal="'AddProjectModal.html'"><span class="icon-asterisk"></span></button>
+                    <form novalidate class="simpleform projectcreate">
+                    <input type="text" name="pjname" ng-model="newProject" />
+                    </form>
+                    <button ng-disabled="!connected" type="submit" class="btn btn-mini" ng-click="addProject(newProject)">+</button>
+                    
                 </li>
                 <li>
                     <label for="job_jobname">Job name</label>
@@ -166,7 +170,7 @@
                 </li>
                 <li>Current Price: <strong class="estimated_price">${{ getEstimatedCurrentPrice() }}/hr</strong></li>
                 <li>Max Price: <strong class="estimated_price" ng-class="{price_toolow: !isMaxPriceHighEnough(), price_ok: isMaxPriceHighEnough()}">${{ getEstimatedMaxPrice() }}/hr</strong><input type="checkbox" class="cr1" ng-model="instanceArgs.dryrun" id="instance_args_dryrun"> <label class="cr1" for="instance_args_dryrun">Dry Run</label></li>
-                <li> <button type="submit" class="btn btn-primary btn-lg" bs-modal="'SpawnInstancesModal.html'"> Spawn Instances </button></li>
+                <li> <button type="submit" class="btn btn-primary btn-lg" ng-click="submitInstanceSpawn()"> Spawn Instances </button></li>
               </ul>
             </form>
         </div>

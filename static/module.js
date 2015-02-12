@@ -243,7 +243,7 @@ module.controller('render', function($scope, $http, socket) {
     device: 'GPU'
   };
   $scope.devices = ['CPU', 'GPU'];
-  $scope.newProject = false;
+  $scope.newProject = 'NewProjectName';
   var InstanceCount = function(value) {
     var num = value;
     this.__defineGetter__("num", function() {
