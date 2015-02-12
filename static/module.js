@@ -3,23 +3,24 @@
 // This is the main controller for our front-end panel. It is getting a bit
 // unwieldly and should be broken up into separate modules in the future.
 
-require.config({
-  paths: {
-    socketio: '/socket.io/socket.io'
-  },
-  shim: {
-    'socketio': {
-      exports: 'io'
-    }
-  }
-});
-define([
-  'angular',
-  'app',
-  'lodash',
-  'socketio'
-], function(angular, app, _, io) {
-  angular.module('grafana.factories', []).
+// require.config({
+//   paths: {
+//     socketio: '/socket.io/socket.io'
+//   },
+//   shim: {
+//     'socketio': {
+//       exports: 'io'
+//     }
+//   }
+// });
+// define([
+//   'angular',
+//   'app',
+//   'lodash',
+//   'socketio'
+// ], function(angular, app, _, io) {
+  var module = angular.module('render', []);
+  module.
   provider('socketFactory', function() {
     'use strict';
     // when forwarding events, prefix the event name
@@ -98,8 +99,7 @@ define([
       }
     ];
   });
-  var module = angular.module('grafana.panels.render', ['$strap.directives']);
-  app.useModule(module);
+  // app.useModule(module);
   // factory to create socket
   module.factory('socket', function($rootScope) {
     var socket = io.connect();
@@ -134,15 +134,7 @@ define([
     };
   });
   
-  module.controller('render', function($scope, $http, $modal, socket, panelSrv) {
-    // panel setup
-    $scope.panelMeta = {
-      description: 'description lorem ipsum'
-    };
-    var _d = {
-      title: 'Render Options',
-    };
-    _.defaults($scope.panel, _d);
+  module.controller('render', function($scope, $http, socket) {
     // socket setup
     $scope.client_id = false;
     $scope.connected = false;
@@ -408,12 +400,11 @@ define([
       }
     };
     $scope.init = function() {
-      panelSrv.init(this);
       // Fetch default instance type price data on init
       setTimeout(function() { $scope.getInstancePrice($scope.instanceArgs.instancetype); }, 1000);
     };
     $scope.openEditor = function() {};
     $scope.init();
   });
-});
+// });
 /*jshint ignore: end*/

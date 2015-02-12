@@ -1,8 +1,13 @@
-<head>
-    <script src="/socket.io/socket.io" type="text/javascript"></script>
-</head>
 
+<html ng-app="render">
+    <head>
+        <script src="/socket.io/socket.io.js" type="text/javascript"></script>
+        <script src="/components/angular.min.js" type="text/javascript"></script>
+        <script src="/module.js" type="text/javascript"></script>
+    </head>
+    
 <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+
 <div id="render-panel" ng-controller='render' ng-init="tab = 'jobqueue'">
     <link rel="stylesheet" type="text/css" href="/stylesheet.css" />
     <!-- Add project modal -->
@@ -70,7 +75,7 @@
                 <li>
                     <label for="job_project">Project</label>
                     <select id="job_project" class="input-sm" ng-model="selectedProject" ng-change="getBlenderFiles()" ng-options="k for (k, v) in projects"></select>
-                    <button ng-disabled="!connected" type="submit" class="btn btn-mini" bs-modal="'AddProjectModal.html'"><span class="icon-asterisk"></span></button>
+                    <button ng-disabled="!connected" type="submit" class="btn btn-mini"><span class="icon-asterisk"></span></button>
                 </li>
                 <li>
                     <label for="job_jobname">Job name</label>
@@ -151,6 +156,8 @@
                     <label for="instance_type">Check Pricing</label>
                     <select id="instance_type" class="input-sm instance_type" ng-change="getInstancePrice(instanceArgs.instancetype, true)" ng-model="instanceArgs.instancetype" ng-options="s for s in instancetypes" /></select><button ng-click="getInstancePrice(instanceArgs.instancetype)" ng-disabled="checking_price" class="btn btn-mini instance_price_refresh"><span ng-class="{'icon-refresh': !checking_price, 'icon-circle-arrow-down': checking_price}"></span></button></li>
                     <ul class="instance_prices">
+    
+
                         <li ng-repeat="(zone, price) in instancePrices[instanceArgs.instancetype]" ng-class="{'btn-primary': zone == instanceArgs.availabilityzone}" class="btn btn-lg">
                             <label><input type="radio" name="availabilityzone" ng-model="instanceArgs.availabilityzone" value="{{zone}}"><h4>{{zone}}</h4><em class="instance_price">{{price}}</em></label>
                         </li>
@@ -163,7 +170,7 @@
                 </li>
                 <li>Current Price: <strong class="estimated_price">${{ getEstimatedCurrentPrice() }}/hr</strong></li>
                 <li>Max Price: <strong class="estimated_price" ng-class="{price_toolow: !isMaxPriceHighEnough(), price_ok: isMaxPriceHighEnough()}">${{ getEstimatedMaxPrice() }}/hr</strong><input type="checkbox" class="cr1" ng-model="instanceArgs.dryrun" id="instance_args_dryrun"> <label class="cr1" for="instance_args_dryrun">Dry Run</label></li>
-                <li> <button type="submit" class="btn btn-primary btn-lg" bs-modal="'SpawnInstancesModal.html'"> Spawn Instances </button></li>
+                <li> <button type="submit" class="btn btn-primary btn-lg"></button>> Spawn Instances </button></li>
               </ul>
             </form>
         </div>
@@ -246,3 +253,4 @@
         </ul>
     </div>
 </div>
+</html>
