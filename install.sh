@@ -1,8 +1,9 @@
 npm install
-cp `pwd`/config/serverconfig.sample.js `pwd`/config/serverconfig.js
-if [ ! -f `pwd`/server/projects.json ]; then
-  echo "{}" > `pwd`/server/projects.json
+
+if [ ! -d `pwd`/config/serverconfig.js ]; then
+  cp `pwd`/config/serverconfig.sample.js `pwd`/config/serverconfig.js
 fi
+
 if [ ! -d `pwd`/db ]; then
   mkdir db
 fi
