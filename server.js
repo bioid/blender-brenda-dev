@@ -24,9 +24,6 @@ var express         = require('express'),
     anyDB           = require('any-db'),
     influx          = require('influx');
 
-// file handler
-// app.use(busboy());
-
 // set up authentication and then static files
 
 var sessionStore = new SQLiteStore({'dir': __dirname + '/server'});
@@ -106,7 +103,6 @@ io.on('connection', function(client) {
   });
   client.on('submitjob', function(data) {
     // the client has submitted a new job
-    console.log('job submit, data: ', data);
     // add it to the db, which returns job_id
     BrendaProjects.addJob(data, function(job_id) {
       // send it over to procs
@@ -121,29 +117,23 @@ io.on('connection', function(client) {
     });
   });
   client.on('spawninstance', function(data) {
-    console.log('instance submit, data: ', data);
     procs.spawnInstance(client, data);
   });
   client.on('checkprice', function(data) {
-    console.log('price check', data.instancetype);
     procs.checkInstancePrice(client, data);
   });
   client.on('addProject', function(data) {
-    console.log('adding new project: ', data);
     BrendaProjects.addProject(data, function(name) {
-      console.log('added project:', name);
       client.emit('projectadded', name);
       client.emit('projectupdate', BrendaProjects.projects);
     });
   });
   client.on('getBlenderFiles', function(data) {
-    console.log('getting blender files for project', data);
     procs.getBlenderFiles(data, function(files) {
       client.emit('blenderFileUpdate', files);
     });
   });
   client.on('completeJob', function(data) {
-    console.log('ending job', data.job.job_id);
     procs.completeJob(client, data, function() {
       BrendaProjects.update(function() {
         client.emit('projectupdate', BrendaProjects.projects);

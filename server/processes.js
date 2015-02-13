@@ -71,7 +71,6 @@ Processes.prototype.completeJob = function(client, opts, callback) {
   var child = spawn(path, args);
   this.children.push(child);
   child.stdout.on('data', function(data) {
-    console.log('stdout:', data.toString());
     client.emit('stdout', data.toString());
   });
   child.on('exit', function(code) {
@@ -99,7 +98,6 @@ Processes.prototype.submitJob = function(client, jobargs, callback) {
       this.children.push(child);
       child.stdout.on('data', function(data) {
         // emit stdout to the client who started this request
-        console.log('stdout: ' + data);
         client.emit('stdout', data.toString());
       });
       child.on('exit', function(code) {
@@ -128,11 +126,9 @@ Processes.prototype.spawnInstance = function(client, instargs) {
   var child = spawn(global.config.brenda_run, args);
   this.children.push(child);
   child.stdout.on('data', function(data) {
-    console.log('stdout: ' + data);
     client.emit('stdout', data.toString());
   });
   child.stderr.on('data', function(data) {
-    console.log('stderr: ' + data);
     client.emit('stdout', data.toString());
   });
   child.on('exit', function(code) {
@@ -142,11 +138,9 @@ Processes.prototype.spawnInstance = function(client, instargs) {
 
 Processes.prototype.buildJobFile = function(client, jobname) {
   var args = [global.config.jobdata_dir + jobname];
-  console.log(args);
   var child = spawn(global.config.build_jobfile, args);
   this.children.push(child);
   child.stdout.on('data', function(data) {
-    console.log('stdout: ' + data);
     io.sockets.connected[client].emit('stdout', data.toString());
   });
   child.on('exit', function(code) {
@@ -164,7 +158,6 @@ Processes.prototype.checkInstancePrice = function(client, instargs) {
   var child = spawn('brenda-run', args);
   this.children.push(child);
   child.stdout.on('data', function(data) {
-    console.log(data.toString());
     var lines = data.toString().split('\n');
     if (lines.length > 2) {
       var prices = {};
@@ -206,7 +199,6 @@ Processes.prototype.checkInstanceCountForRegion = function(region) {
     args = args.concat(['-c', regionConf]);
   }
   args.push('instances');
-  //console.log('Check instance count for region ' + region, args);
   var child = spawn('brenda-tool', args);
   this.children.push(child);
 
