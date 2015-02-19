@@ -1,13 +1,17 @@
 
 module.exports = function() {
-  var mkdirp = require('mkdirp');
-
+  var mkdirp = require('mkdirp'),
+      util = require('util'),
+      EventEmitter = require('events').EventEmitter;
+  
   var BrendaProjects = function() {
     this.projects = {};
     this.update(function() {
       // empty
     });
   };
+  
+  util.inherits(BrendaProjects, EventEmitter);
   
   BrendaProjects.prototype.updateProjects = function(callback) {
     // Retrieves all of the projects in the database,
