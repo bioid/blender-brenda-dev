@@ -9,11 +9,13 @@ module.exports = function() {
     this.update(function() {
       // empty
     });
+    // call the EventEmitter constructor
+    EventEmitter.call(this);
   };
   
   util.inherits(BrendaProjects, EventEmitter);
   
-  BrendaProjects.prototype.updateProjects = function(callback) {
+  BrendaProjects.prototype.updateProjects = function() {
     // Retrieves all of the projects in the database,
     // and adds them to this.projects
     global.dbHandler.getAllProjects(function(res) {
@@ -24,11 +26,12 @@ module.exports = function() {
           }
         }
       }
-      callback();
+      //callback();
+      this.emit('projectsUpdated');
     }.bind(this));
   };
   
-  BrendaProjects.prototype.updateJobs = function(callback) {
+  BrendaProjects.prototype.updateJobs = function() {
     global.dbHandler.getAllJobs(function(res) {
       // loop through all of the jobs
       for (var i = 0; i < res.rows.length; i++) {
@@ -42,7 +45,8 @@ module.exports = function() {
           }
         }
       }
-      callback();
+      //callback();
+      this.emit('newData', this.projects);
     }.bind(this));
   };
 
