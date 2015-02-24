@@ -139,6 +139,7 @@ io.on('connection', function(client) {
 });
 
 global.dbHandler.on('jobAdded', function(opts) {
+  BrendaProjects.update();
   procs.submitJob(opts);
 });
 
