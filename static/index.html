@@ -5,6 +5,8 @@
     <script src="/app/app.js" type="text/javascript"></script>
     <script src="/app/providers.js" type="text/javascript"></script>
     <script src="/app/factories.js" type="text/javascript"></script>
+    <script src="/app/directives.js" type="text/javascript"></script>
+    
 </head>
 
 <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
@@ -154,7 +156,7 @@
     <div id="spawninstances" class="instance_args" ng-show="tab == 'instances'">
         <div class="renderopts">
             <label for="instance_region">Region</label> <select id="instance_region" class="input-sm region" ng-change="getInstancePrice(instanceArgs.instancetype, true)" ng-model="instanceArgs.region" ng-options="r for r in regions" />
-            <form class="simple-form">
+            <form name="instanceForm" class="simple-form">
               <ul>
                 <li>
                     <label for="instance_type">Check Pricing</label>
@@ -168,12 +170,13 @@
               
                 <li>
                     <input type="range" min="1" max="50" ng-model="instanceArgs.instancecount.num" /> 
-                    <br>Spawn <input type="number" min="1" ng-model="instanceArgs.instancecount.num" size="3" id="instancecount" class='rangeinput' /> instances at $<input type="number" min="0.0001" step="0.0001" ng-model="instanceArgs.instanceprice" size="3" id="instanceprice" class='rangeinput' /> per hour
+                    <br>Spawn <input type="number" min="1" ng-model="instanceArgs.instancecount.num" size="3" id="instancecount" class='rangeinput' /> instances at $<input type="text" min="0.0001" step="0.0001" ng-model="instanceArgs.instanceprice" size="3" id="instanceprice" class='rangeinput' numbers-only="" /> per hour
                 </li>
                 <li>Current Price: <strong class="estimated_price">${{ getEstimatedCurrentPrice() }}/hr</strong></li>
                 <li>Max Price: <strong class="estimated_price" ng-class="{price_toolow: !isMaxPriceHighEnough(), price_ok: isMaxPriceHighEnough()}">${{ getEstimatedMaxPrice() }}/hr</strong><input type="checkbox" class="cr1" ng-model="instanceArgs.dryrun" id="instance_args_dryrun"> <label class="cr1" for="instance_args_dryrun">Dry Run</label></li>
                 <li> <button type="submit" class="btn btn-primary btn-lg" ng-click="submitInstanceSpawn()"> Spawn Instances </button></li>
               </ul>
+            <tt>valid: {{ instanceForm.$valid }}</tt>
             </form>
         </div>
     </div>
