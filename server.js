@@ -96,7 +96,6 @@ io.on('connection', function(client) {
   BrendaProjects.on('newData', function(data) {
     client.emit('projectupdate', BrendaProjects.projects);
   });
-  
   procs.getRegionConfigs(function(regions) {
     client.emit('regionconfigs', regions);
   });
