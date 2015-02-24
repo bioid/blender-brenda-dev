@@ -32,7 +32,12 @@ Processes.prototype.getRegionConfigs = function(callback) {
   var path = global.dirname + '/config/regions/**/*.conf';
   glob(path, function(err, files) {
     if (err) { console.log(err) }
-    callback(files);
+    var regions = [];
+    for (var i = 0; i < files.length; i++) {
+      var parts = files[i].split('/');
+      regions.push(parts[parts.length - 1]);
+    }
+    callback(regions);
   });
 };
 

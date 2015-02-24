@@ -97,13 +97,7 @@ io.on('connection', function(client) {
     client.emit('projectupdate', BrendaProjects.projects);
   });
   
-  procs.getRegionConfigs(function(files) {
-    // move this to getRegionConfigs()
-    var regions = [];
-    for (var i = 0; i < files.length; i++) {
-      var parts = files[i].split('/');
-      regions.push(parts[parts.length - 1]);
-    }
+  procs.getRegionConfigs(function(regions) {
     client.emit('regionconfigs', regions);
   });
   client.on('submitjob', function(data) {
@@ -131,9 +125,7 @@ io.on('connection', function(client) {
   });
   client.on('completeJob', function(data) {
     procs.completeJob(client, data, function() {
-      BrendaProjects.update(function() {
-        client.emit('projectupdate', BrendaProjects.projects);
-      });
+      BrendaProjects.update();
     });
   });
 });
