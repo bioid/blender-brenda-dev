@@ -1,13 +1,16 @@
 module.exports = function(spawn, io) {
-var mkdirp = require('mkdirp');
-var fs = require('fs');
 var glob = require('glob');
+var util = require('util');
+var EventEmitter = require('events').EventEmitter;
 
 var Processes = function() {
   this.children = [];
   this.instances = {};
   this.db = false;
+  EventEmitter.call(this);
 };
+
+util.inherits(Processes, EventEmitter);
 
 Processes.prototype.removeChild = function(child) {
   this.children.splice(this.children.indexOf(child), 1);
@@ -33,37 +36,7 @@ Processes.prototype.getRegionConfigs = function(callback) {
   });
 };
 
-Processes.prototype.buildConfig = function(opts, callback) {
-  var configLines = [
-    'WORK_QUEUE=sqs://elation-render-output',
-    'BLENDER_PROJECT=s3://elation-render-data/'+ opts.project.name + '.tar.gz',
-    'RENDER_OUTPUT=s3://elation-render-output/'+ opts.project.name + '/' + opts.jobname + '/',
-    'BLENDER_FILE=' + opts.renderOpts.blenderFile,
-    'BLENDER_RENDER_RESOLUTION_X=' + opts.renderOpts.renderResolutionX,
-    'BLENDER_RENDER_RESOLUTION_Y=' + opts.renderOpts.renderResolutionY,
-    'BLENDER_RENDER_RESOLUTION_PERCENTAGE=' + opts.renderOpts.renderPercentage,
-    'BLENDER_CYCLES_SAMPLES=' + opts.renderOpts.samples,
-    'BLENDER_CYCLES_DEVICE=' + opts.renderOpts.device
-    ];
 
-  if (opts.jobtype == "bake") {
-    var baketype = opts.renderOpts.baketype = opts.baketype || 'COMBINED',
-        bakemargin = opts.renderOpts.bakemargin = opts.bakemargin || 0,
-        bakeuvlayer = opts.renderOpts.bakeuvlayer = opts.bakeuvlayer || 'LightMap';
-    configLines.push('BLENDER_BAKE_TYPE=' + baketype);
-    configLines.push('BLENDER_BAKE_MARGIN=' + bakemargin);
-    configLines.push('BLENDER_BAKE_UVLAYER=' + bakeuvlayer);
-  }
-
-  var configText = configLines.join('\n') + '\n';
-  var path = global.config.projects_dir + '/' + opts.project.name + '/jobs/' + opts.jobname + '/scratch/brenda-job.conf';
-  fs.writeFile(path, configText, function(err) {
-    if (err) { console.log(err) } 
-    global.dbHandler.addBrendaConf(opts, function() {
-      callback();
-    })
-  });
-};
 
 Processes.prototype.completeJob = function(client, opts, callback) {
   var path = global.dirname + '/scripts/brenda/job-complete.sh';
@@ -81,31 +54,28 @@ Processes.prototype.completeJob = function(client, opts, callback) {
   }.bind(this));
 };
 
-Processes.prototype.submitJob = function(client, jobargs, callback) {
+Processes.prototype.submitJob = function(opts) {
   var args = [];
-  this.makeJobDir(jobargs.project.name, jobargs.jobname, function() {
-    this.buildConfig(jobargs, function() {
-      if (jobargs.jobtype == 'animation') {
-        if (jobargs.subframe) {
-          args = [jobargs.project.name, jobargs.jobname, 'subframe', '-s', jobargs.start, '-e', jobargs.end, '-X', jobargs.tilesX, '-Y', jobargs.tilesY];
-        } else {
-          args = [jobargs.project.name, jobargs.jobname, 'animation', '-s', jobargs.start, '-e', jobargs.end];
-        }
-      } else if (jobargs.jobtype == 'bake') {
-        args = [jobargs.project.name, jobargs.jobname, 'bake', '-e', jobargs.numobjects];
-      }
-      var child = spawn(global.config.spawn_jobs, args); 
-      this.children.push(child);
-      child.stdout.on('data', function(data) {
-        // emit stdout to the client who started this request
-        client.emit('stdout', data.toString());
-      });
-      child.on('exit', function(code) {
-        this.checkJobCount();
-        this.removeChild(child);
-        callback();
-      }.bind(this));
-    }.bind(this));
+  if (opts.jobtype == 'animation') {
+    if (opts.subframe) {
+      args = [opts.project.name, opts.jobname, 'subframe', '-s', opts.start, '-e', opts.end, '-X', opts.tilesX, '-Y', opts.tilesY];
+    } else {
+      args = [opts.project.name, opts.jobname, 'animation', '-s', opts.start, '-e', opts.end];
+    }
+  } else if (opts.jobtype == 'bake') {
+    args = [opts.project.name, opts.jobname, 'bake', '-e', opts.numobjects];
+  }
+  var child = spawn(global.config.spawn_jobs, args); 
+  this.children.push(child);
+  child.stdout.on('data', function(data) {
+    // emit stdout to the client who started this request
+    opts.client.emit('stdout', data.toString());
+  });
+  child.on('exit', function(code) {
+    this.checkJobCount();
+    this.removeChild(child);
+    opts.exitcode = code;
+    this.emit('processExited', opts);
   }.bind(this));
 };
 
@@ -236,13 +206,6 @@ Processes.prototype.checkJobCount = function() {
     setTimeout(this.checkJobCount.bind(this), refreshtime);
     this.removeChild(child);
   }.bind(this));
-};
-
-Processes.prototype.makeJobDir = function(projectDir, jobname, callback) {
-  mkdirp(global.config.projects_dir + '/' + projectDir + '/jobs/' + jobname + '/' + 'scratch', function(err) {
-    if (err) { console.log(err) }
-    callback();
-  });
 };
 
 Processes.prototype.killAll = function() {

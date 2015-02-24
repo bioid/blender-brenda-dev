@@ -1,10 +1,16 @@
 module.exports = function() {
 
   var anyDB = require('any-db');
+  var util = require('util');
+  var EventEmitter = require('events').EventEmitter;
+  
   
   var dbHandler = function() {
       this.projects_db = anyDB.createConnection('sqlite3://' + global.config.projects_dir + '/projects.db');
+      EventEmitter.call(this);
   };
+  
+  util.inherits(dbHandler, EventEmitter);
   
   dbHandler.prototype.addProject = function(name, callback) {
     var sql = 'INSERT INTO projects(name) VALUES(?);';
@@ -22,7 +28,16 @@ module.exports = function() {
     });
   };
   
-  dbHandler.prototype.addJob = function(opts, callback) {
+  dbHandler.prototype.addJob = function(opts) {
+    this.addJobRow(opts, function(job_id) {
+      opts.job_id = job_id;
+      this.addBrendaConf(opts, function() {
+        this.emit('jobAdded', opts);
+      }.bind(this));
+    }.bind(this));
+  };
+  
+  dbHandler.prototype.addJobRow = function(opts, callback) {
     var values = [opts.jobname, opts.project.project_id, opts.jobtype, Date.now()];
     var fields = ['job_name', 'project_id', 'job_type', 'start_time'];
     var placeholders = ['?', '?', '?', '?'];
@@ -46,8 +61,6 @@ module.exports = function() {
     }
     
     var sql = 'INSERT INTO jobs('+ fields.join(', ') +') VALUES('+ placeholders.join(', ') +');';
-    console.log(sql);
-    console.log(values);
     this.projects_db.query(sql, values, function(err, res) {
       if (err) { console.log(err) }
       callback(res.lastInsertId);

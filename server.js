@@ -92,6 +92,11 @@ io.on('connection', function(client) {
   client.emit('connected', client.id);        
   console.log('client', client.id, 'connected');
   client.emit('projectupdate', BrendaProjects.projects);
+  
+  BrendaProjects.on('newData', function(data) {
+    client.emit('projectupdate', BrendaProjects.projects);
+  });
+  
   procs.getRegionConfigs(function(files) {
     // move this to getRegionConfigs()
     var regions = [];
@@ -103,18 +108,8 @@ io.on('connection', function(client) {
   });
   client.on('submitjob', function(data) {
     // the client has submitted a new job
-    // add it to the db, which returns job_id
-    BrendaProjects.addJob(data, function(job_id) {
-      // send it over to procs
-      data.job_id = job_id;
-      procs.submitJob(client, data, function() {
-        // the job has been submitted, update the projects object
-        // and send it back to the client
-        BrendaProjects.update(function() {
-          client.emit('projectupdate', BrendaProjects.projects);
-        });
-      });
-    });
+    data.client = client;
+    BrendaProjects.addJob(data);
   });
   client.on('spawninstance', function(data) {
     procs.spawnInstance(client, data);
@@ -124,9 +119,10 @@ io.on('connection', function(client) {
   });
   client.on('addProject', function(data) {
     BrendaProjects.addProject(data, function(name) {
-      client.emit('projectadded', name);
-      client.emit('projectupdate', BrendaProjects.projects);
     });
+  });
+  BrendaProjects.on('projectAdded', function(name) {
+    client.emit('projectadded', name);
   });
   client.on('getBlenderFiles', function(data) {
     procs.getBlenderFiles(data, function(files) {
@@ -140,6 +136,10 @@ io.on('connection', function(client) {
       });
     });
   });
+});
+
+global.dbHandler.on('jobAdded', function(opts) {
+  procs.submitJob(opts);
 });
 
 console.log("server listening on", global.config.port);
