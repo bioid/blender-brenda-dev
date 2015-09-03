@@ -158,7 +158,7 @@
               <ul>
                 <li>
                     <label for="instance_type">Check Pricing</label>
-                    <select id="instance_type" class="input-sm instance_type" ng-change="getInstancePrice(instanceArgs.instancetype, true)" ng-model="instanceArgs.instancetype" ng-options="s for s in instancetypes" /></select><button ng-click="getInstancePrice(instanceArgs.instancetype)" ng-disabled="checking_price" class="btn btn-mini instance_price_refresh"><span ng-class="{'icon-refresh': !checking_price, 'icon-circle-arrow-down': checking_price}"></span></button></li>
+                    <select id="instance_type" class="input-sm instance_type" ng-change="getInstancePrice(instanceArgs.instancetype, true)" ng-model="instanceArgs.instancetype" ng-options="s for s in instancetypes"></select><button ng-click="getInstancePrice(instanceArgs.instancetype)" ng-disabled="checking_price" class="btn btn-mini instance_price_refresh"><span ng-class="{'icon-refresh': !checking_price, 'icon-circle-arrow-down': checking_price}"></span></button></li>
                     <ul class="instance_prices">
                         <li ng-repeat="(zone, price) in instancePrices[instanceArgs.instancetype]" ng-class="{'btn-primary': zone == instanceArgs.availabilityzone}" class="btn btn-lg">
                             <label><input type="radio" name="availabilityzone" ng-model="instanceArgs.availabilityzone" value="{{zone}}"><h4>{{zone}}</h4><em class="instance_price">{{price}}</em></label>
