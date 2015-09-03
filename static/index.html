@@ -124,7 +124,7 @@
             <ul class="job_args">
                 <li>
                     <label for="job_renderargs_blenderfile">Job file</label>
-                    <select id="job_renderargs_blenderfile" class="input-sm" ng-model="renderOpts.blenderFile" ng-options="i for i in blenderFiles" />
+                    <select id="job_renderargs_blenderfile" class="input-sm" ng-model="renderOpts.blenderFile" ng-options="i for i in blenderFiles"></select>
                     <button ng-click="getBlenderFiles()" ng-disabled="checking_files" class="btn btn-mini blender_files_refresh">
                         <span ng-class="{'icon-refresh': !checking_files, 'icon-circle-arrow-down': checking_files}"></span>
                     </button>
